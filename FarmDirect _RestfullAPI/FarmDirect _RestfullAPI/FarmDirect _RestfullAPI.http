@@ -1,0 +1,6 @@
+@FarmDirect__RestfullAPI_HostAddress = http://localhost:5234
+
+GET {{FarmDirect__RestfullAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
