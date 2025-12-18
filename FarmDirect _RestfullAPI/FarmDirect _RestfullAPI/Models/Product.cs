@@ -11,8 +11,12 @@ public partial class Product
     [Key]
     public int ProductId { get; set; }
 
+    [ForeignKey("FarmerId")]
+    [InverseProperty("Products")]
     public int FarmerId { get; set; }
 
+    [ForeignKey("CategoryId")]
+    [InverseProperty("Products")]
     public int CategoryId { get; set; }
 
     [StringLength(100)]
@@ -49,12 +53,10 @@ public partial class Product
     [InverseProperty("Product")]
     public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
 
-    [ForeignKey("CategoryId")]
-    [InverseProperty("Products")]
+
     public virtual Category Category { get; set; } = null!;
 
-    [ForeignKey("FarmerId")]
-    [InverseProperty("Products")]
+
     public virtual User Farmer { get; set; } = null!;
 
     [InverseProperty("Product")]
