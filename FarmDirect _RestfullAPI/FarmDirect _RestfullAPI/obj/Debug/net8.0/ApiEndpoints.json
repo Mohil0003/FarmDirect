@@ -24,8 +24,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "product",
-        "Type": "FarmDirect__RestfullAPI.Models.Product",
+        "Name": "dto",
+        "Type": "FarmDirect__RestfullAPI.DTOs.ProductCreateDto",
         "IsRequired": true
       }
     ],
@@ -71,8 +71,8 @@
         "IsRequired": true
       },
       {
-        "Name": "updatedProduct",
-        "Type": "FarmDirect__RestfullAPI.Models.Product",
+        "Name": "updatedDto",
+        "Type": "FarmDirect__RestfullAPI.DTOs.ProductCreateDto",
         "IsRequired": true
       }
     ],

@@ -1,4 +1,5 @@
-﻿using FarmDirect__RestfullAPI.Models;
+﻿using FarmDirect__RestfullAPI.DTOs;
+using FarmDirect__RestfullAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +22,11 @@ namespace FarmDirect__RestfullAPI.Controllers
             var products = _context.Products.ToList();
             return Ok(products);
         }
+
+
+
+
+
         [HttpGet]
         [Route("{id:int}")]
         public IActionResult GetProduct(int id)
@@ -33,40 +39,68 @@ namespace FarmDirect__RestfullAPI.Controllers
             return Ok(product);
         }
 
+        //[HttpPost]
+        //[Route("AddProduct")]
+        //public IActionResult CreateProduct([FromBody] Product product)
+        //{
+        //    _context.Products.Add(product);
+        //    _context.SaveChanges();
+        //    //return CreatedAtAction(nameof(GetProduct), new { id = product.ProductId }, product);
+        //    return Ok(product);
+        //}
+
         [HttpPost]
         [Route("AddProduct")]
-        public IActionResult CreateProduct([FromBody] Product product)
+        public IActionResult CreateProduct([FromBody] ProductCreateDto dto)
         {
+            // 1. Map DTO to the actual Product Model
+            var product = new Product
+            {
+                FarmerId = dto.FarmerId,
+                CategoryId = dto.CategoryId,
+                Name = dto.Name,
+                Description = dto.Description,
+                BasePrice = dto.BasePrice,
+                CurrentPrice = dto.CurrentPrice,
+                StockQuantity = dto.StockQuantity,
+                Unit = dto.Unit,
+                HarvestDate = dto.HarvestDate,
+                ExpiryDate = dto.ExpiryDate,
+                ImageUrl = dto.ImageUrl,
+                IsActive = true, // Default value
+                CreatedAt = DateTime.Now // Set server-side timestamp
+            };
+
+            // 2. Add to context and save
             _context.Products.Add(product);
             _context.SaveChanges();
-            //return CreatedAtAction(nameof(GetProduct), new { id = product.ProductId }, product);
+
             return Ok(product);
         }
 
+
+
         [HttpPut]
         [Route("UpdateProduct/{id:int}")]
-        public IActionResult UpdateProduct(int id, [FromBody] Product updatedProduct)
+        public IActionResult UpdateProduct(int id, [FromBody] ProductCreateDto updatedDto)
         {
             var product = _context.Products.Find(id);
             if (product == null)
             {
                 return NotFound();
             }
-            product.FarmerId = updatedProduct.FarmerId;
-            product.Farmer = updatedProduct.Farmer;
+            product.FarmerId = updatedDto.FarmerId;
 
-            product.CategoryId  = updatedProduct.CategoryId;
-            product.Category = updatedProduct.Category;
-            product.Name = updatedProduct.Name;
-            product.Description = updatedProduct.Description;
-            product.BasePrice = updatedProduct.BasePrice;
-            product.CurrentPrice = updatedProduct.CurrentPrice;
-            product.StockQuantity=updatedProduct.StockQuantity;
-            product.Unit = updatedProduct.Unit;
-            product.HarvestDate = updatedProduct.HarvestDate;
-            product.ExpiryDate = updatedProduct.ExpiryDate;
-            product.ImageUrl = updatedProduct.ImageUrl;
-            product.IsActive = updatedProduct.IsActive;
+            product.CategoryId  = updatedDto.CategoryId;
+            product.Name = updatedDto.Name;
+            product.Description = updatedDto.Description;
+            product.BasePrice = updatedDto.BasePrice;
+            product.CurrentPrice = updatedDto.CurrentPrice;
+            product.StockQuantity=updatedDto.StockQuantity;
+            product.Unit = updatedDto.Unit;
+            product.HarvestDate = updatedDto.HarvestDate;
+            product.ExpiryDate = updatedDto.ExpiryDate;
+            product.ImageUrl = updatedDto.ImageUrl;
             _context.SaveChanges();
             return Ok(product);
         }
