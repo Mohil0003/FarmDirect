@@ -1,5 +1,6 @@
 ﻿using FarmDirect__RestfullAPI.DTOs;
 using FarmDirect__RestfullAPI.Models;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,9 +11,11 @@ namespace FarmDirect__RestfullAPI.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly FarmDirectDBContext _context;
-        public ProductsController(FarmDirectDBContext context)
+        private readonly IValidator<ProductCreateDto> _productValidator;
+        public ProductsController(FarmDirectDBContext context,IValidator<ProductCreateDto> validator)
         {
             _context = context;
+            _productValidator = validator;
         }
 
         [HttpGet]
@@ -44,6 +47,16 @@ namespace FarmDirect__RestfullAPI.Controllers
         public IActionResult CreateProduct([FromBody] ProductCreateDto dto)
         {
             // 1. Map DTO to the actual Product Model
+            var result = _productValidator.Validate(dto);
+            if (!result.IsValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    errors = result.Errors.Select(e => e.ErrorMessage)
+                });
+            }
+
             var product = new Product
             {
                 FarmerId = dto.FarmerId,
@@ -79,8 +92,18 @@ namespace FarmDirect__RestfullAPI.Controllers
             {
                 return NotFound();
             }
-            product.FarmerId = updatedDto.FarmerId;
 
+            var result = _productValidator.Validate(updatedDto);
+            if (!result.IsValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    errors = result.Errors.Select(e => e.ErrorMessage)
+                });
+            }
+
+            product.FarmerId = updatedDto.FarmerId;
             product.CategoryId  = updatedDto.CategoryId;
             product.Name = updatedDto.Name;
             product.Description = updatedDto.Description;

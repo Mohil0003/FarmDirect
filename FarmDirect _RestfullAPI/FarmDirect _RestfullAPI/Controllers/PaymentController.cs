@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using FarmDirect__RestfullAPI.Models;
 using FarmDirect__RestfullAPI.DTOs;
+using FluentValidation;
 
 namespace FarmDirect__RestfullAPI.Controllers
 {
@@ -10,9 +11,11 @@ namespace FarmDirect__RestfullAPI.Controllers
     public class PaymentController : ControllerBase
     {
         private readonly FarmDirectDBContext _context;
-        public PaymentController(FarmDirectDBContext context)
+        private readonly IValidator<PaymentCreateDto> _paymentValidator;
+        public PaymentController(FarmDirectDBContext context, IValidator<PaymentCreateDto> validator)
         {
             _context = context;
+            _paymentValidator = validator;
         }
         [HttpGet]
         [Route("GetAllPayments")]
@@ -38,14 +41,24 @@ namespace FarmDirect__RestfullAPI.Controllers
         [Route("AddPayment")]
         public IActionResult CreatePayment([FromBody] PaymentCreateDto dto)
         {
-          var payment = new Payment
-          {
+            var result = _paymentValidator.Validate(dto);
+            if (!result.IsValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    errors = result.Errors.Select(e => e.ErrorMessage)
+                });
+            }
+
+            var payment = new Payment
+            {
               OrderId = dto.OrderId,
               PaymentDate = dto.PaymentDate ?? DateTime.UtcNow,
               Amount = dto.Amount,
               PaymentMethod = dto.PaymentMethod,
               Status = dto.Status ?? "Pending"
-          };
+            };
             _context.Payments.Add(payment);
             _context.SaveChanges();
             return Ok(payment);
@@ -59,6 +72,15 @@ namespace FarmDirect__RestfullAPI.Controllers
             {
                 return NotFound();
             }
+            var result = _paymentValidator.Validate(dto);
+            if (!result.IsValid) {
+                return BadRequest(new
+                {
+                    success = false,
+                    errors = result.Errors.Select(e => e.ErrorMessage)
+                });
+            }
+
             payment.OrderId = dto.OrderId;
             payment.PaymentDate = dto.PaymentDate ?? payment.PaymentDate;
             payment.Amount = dto.Amount;

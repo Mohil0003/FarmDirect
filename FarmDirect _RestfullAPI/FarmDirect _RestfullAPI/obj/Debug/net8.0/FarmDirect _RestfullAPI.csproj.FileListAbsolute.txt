@@ -141,3 +141,5 @@ D:\Github\FarmDirect\FarmDirect _RestfullAPI\FarmDirect _RestfullAPI\obj\Debug\n
 D:\Github\FarmDirect\FarmDirect _RestfullAPI\FarmDirect _RestfullAPI\obj\Debug\net8.0\FarmDirect _RestfullAPI.pdb
 D:\Github\FarmDirect\FarmDirect _RestfullAPI\FarmDirect _RestfullAPI\obj\Debug\net8.0\FarmDirect _RestfullAPI.genruntimeconfig.cache
 D:\Github\FarmDirect\FarmDirect _RestfullAPI\FarmDirect _RestfullAPI\obj\Debug\net8.0\ref\FarmDirect _RestfullAPI.dll
+D:\Github\FarmDirect\FarmDirect _RestfullAPI\FarmDirect _RestfullAPI\bin\Debug\net8.0\FluentValidation.dll
+D:\Github\FarmDirect\FarmDirect _RestfullAPI\FarmDirect _RestfullAPI\bin\Debug\net8.0\FluentValidation.DependencyInjectionExtensions.dll

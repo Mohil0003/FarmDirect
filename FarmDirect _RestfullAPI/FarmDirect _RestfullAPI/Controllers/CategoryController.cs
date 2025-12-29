@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using FarmDirect__RestfullAPI.DTOs;
 using FarmDirect__RestfullAPI.Models;
+using FluentValidation;
 
 namespace FarmDirect__RestfullAPI.Controllers
 {
@@ -10,9 +11,11 @@ namespace FarmDirect__RestfullAPI.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly FarmDirectDBContext _context;
-        public CategoryController(FarmDirectDBContext context)
+        private readonly IValidator<CategoryCreateDto> _categoryValidator;
+        public CategoryController(FarmDirectDBContext context,IValidator<CategoryCreateDto> validator)
         {
             _context = context;
+            _categoryValidator = validator;
         }
 
 
@@ -41,6 +44,15 @@ namespace FarmDirect__RestfullAPI.Controllers
 
         public IActionResult CreateCategory([FromBody] CategoryCreateDto dto)
         {
+            var result = _categoryValidator.Validate(dto);
+            if (!result.IsValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    errors = result.Errors.Select(e => e.ErrorMessage)
+                });
+            }
             var category = new Category
             {
                 CategoryName = dto.CategoryName,
@@ -60,6 +72,14 @@ namespace FarmDirect__RestfullAPI.Controllers
             if (category == null)
             {
                 return NotFound();
+            }
+            var result = _categoryValidator.Validate(dto);
+            if (!result.IsValid) {
+                return BadRequest(new
+                {
+                    success = false,
+                    errors = result.Errors.Select(e => e.ErrorMessage)
+                });
             }
             category.CategoryName = dto.CategoryName;
             category.Description = dto.Description;

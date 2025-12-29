@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using FarmDirect__RestfullAPI.Models;
 using FarmDirect__RestfullAPI.DTOs;
+using FluentValidation;
+using FarmDirect__RestfullAPI.Validator;
 
 namespace FarmDirect__RestfullAPI.Controllers
 {
@@ -10,9 +12,11 @@ namespace FarmDirect__RestfullAPI.Controllers
     public class CartController : ControllerBase
     {
         private readonly FarmDirectDBContext _context;
-        public CartController(FarmDirectDBContext context)
+        private readonly IValidator<CartCreateDto> _cartValidator;
+        public CartController(FarmDirectDBContext context,IValidator<CartCreateDto> validator)
         {
             _context = context;
+            _cartValidator = validator;
         }
 
         [HttpGet]
@@ -39,6 +43,15 @@ namespace FarmDirect__RestfullAPI.Controllers
         [Route("AddCart")]
         public IActionResult CreateCart([FromBody] CartCreateDto dto)
         {
+            var result = _cartValidator.Validate(dto);
+            if (!result.IsValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    errors = result.Errors.Select(e => e.ErrorMessage)
+                });
+            }
             var cart = new Cart
             {
                 ConsumerId = dto.ConsumerId,
@@ -76,6 +89,15 @@ namespace FarmDirect__RestfullAPI.Controllers
             if (cart == null)
             {
                 return NotFound();
+            }
+            var result = _cartValidator.Validate(dto);
+            if (!result.IsValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    errors = result.Errors.Select(e => e.ErrorMessage)
+                });
             }
             cart.ConsumerId = dto.ConsumerId;
             cart.AddedAt = dto.AddedAt ?? cart.AddedAt;

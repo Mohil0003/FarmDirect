@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using FarmDirect__RestfullAPI.Models;
 using FarmDirect__RestfullAPI.DTOs;
+using FluentValidation;
 
 namespace FarmDirect__RestfullAPI.Controllers
 {
@@ -10,9 +11,11 @@ namespace FarmDirect__RestfullAPI.Controllers
     public class ReviewController : ControllerBase
     {
         private readonly FarmDirectDBContext _context;
-        public ReviewController(FarmDirectDBContext context)
+        private readonly IValidator<ReviewCreateDto> _reviewValidator;
+        public ReviewController(FarmDirectDBContext context, IValidator<ReviewCreateDto> reviewvalidator)
         {
             _context = context;
+            _reviewValidator = reviewvalidator;
         }
 
         [HttpGet]
@@ -39,6 +42,15 @@ namespace FarmDirect__RestfullAPI.Controllers
         [Route("AddReview")]
         public IActionResult CreateReview([FromBody] ReviewCreateDto dto)
         {
+            var result = _reviewValidator.Validate(dto);
+            if (!result.IsValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    errors = result.Errors.Select(e => e.ErrorMessage)
+                });
+            }
             var review = new Review
             {
                 ProductId = dto.ProductId,
@@ -61,6 +73,17 @@ namespace FarmDirect__RestfullAPI.Controllers
             {
                 return NotFound();
             }
+
+            var result = _reviewValidator.Validate(dto);
+            if (!result.IsValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    errors = result.Errors.Select(e => e.ErrorMessage)
+                });
+            }
+
             review.ProductId = dto.ProductId;
             review.ConsumerId = dto.ConsumerId;
             review.Rating = dto.Rating;

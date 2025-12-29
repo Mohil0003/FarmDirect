@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using FarmDirect__RestfullAPI.Models;
 using FarmDirect__RestfullAPI.DTOs;
+using FluentValidation;
 
 namespace FarmDirect__RestfullAPI.Controllers
 {
@@ -10,9 +11,11 @@ namespace FarmDirect__RestfullAPI.Controllers
     public class OrderController : ControllerBase
     {
         private readonly FarmDirectDBContext _context;
-        public OrderController(FarmDirectDBContext context)
+        private readonly IValidator<OrderCreateDto> _orderValidator;
+        public OrderController(FarmDirectDBContext context,IValidator<OrderCreateDto>validator)
         {
             _context = context;
+            _orderValidator = validator;
         }
 
 
@@ -40,6 +43,15 @@ namespace FarmDirect__RestfullAPI.Controllers
         [Route("AddOrder")]
         public IActionResult PostOrder([FromBody] OrderCreateDto dto)
         {
+            var result = _orderValidator.Validate(dto);
+            if (!result.IsValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    errors = result.Errors.Select(e => e.ErrorMessage)
+                });
+            }
             var order = new Order
             {
                 ConsumerId = dto.ConsumerId,
@@ -62,6 +74,15 @@ namespace FarmDirect__RestfullAPI.Controllers
             if (order == null)
             {
                 return NotFound();
+            }
+            var result = _orderValidator.Validate(dto);
+            if (!result.IsValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    errors = result.Errors.Select(e => e.ErrorMessage)
+                });
             }
             order.ConsumerId = dto.ConsumerId;
             order.OrderDate = dto.OrderDate ?? order.OrderDate;

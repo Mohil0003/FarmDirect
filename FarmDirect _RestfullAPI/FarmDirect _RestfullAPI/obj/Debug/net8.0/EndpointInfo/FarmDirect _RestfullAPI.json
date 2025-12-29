@@ -1046,17 +1046,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/User"
+                "$ref": "#/components/schemas/UserCreateDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/User"
+                "$ref": "#/components/schemas/UserCreateDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/User"
+                "$ref": "#/components/schemas/UserCreateDto"
               }
             }
           }
@@ -1088,17 +1088,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/User"
+                "$ref": "#/components/schemas/UserCreateDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/User"
+                "$ref": "#/components/schemas/UserCreateDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/User"
+                "$ref": "#/components/schemas/UserCreateDto"
               }
             }
           }
@@ -1136,39 +1136,6 @@
   },
   "components": {
     "schemas": {
-      "Cart": {
-        "type": "object",
-        "properties": {
-          "cartId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "consumerId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "productId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "quantity": {
-            "type": "number",
-            "format": "double"
-          },
-          "addedAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "consumer": {
-            "$ref": "#/components/schemas/User"
-          },
-          "product": {
-            "$ref": "#/components/schemas/Product"
-          }
-        },
-        "additionalProperties": false
-      },
       "CartCreateDto": {
         "type": "object",
         "properties": {
@@ -1192,35 +1159,6 @@
         },
         "additionalProperties": false
       },
-      "Category": {
-        "type": "object",
-        "properties": {
-          "categoryId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "categoryName": {
-            "maxLength": 50,
-            "minLength": 0,
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "maxLength": 255,
-            "minLength": 0,
-            "type": "string",
-            "nullable": true
-          },
-          "products": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Product"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "CategoryCreateDto": {
         "type": "object",
         "properties": {
@@ -1230,56 +1168,6 @@
           },
           "description": {
             "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "Order": {
-        "type": "object",
-        "properties": {
-          "orderId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "consumerId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "orderDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "totalAmount": {
-            "type": "number",
-            "format": "double"
-          },
-          "status": {
-            "maxLength": 20,
-            "minLength": 0,
-            "type": "string",
-            "nullable": true
-          },
-          "deliveryAddress": {
-            "type": "string",
-            "nullable": true
-          },
-          "consumer": {
-            "$ref": "#/components/schemas/User"
-          },
-          "orderItems": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/OrderItem"
-            },
-            "nullable": true
-          },
-          "payments": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Payment"
-            },
             "nullable": true
           }
         },
@@ -1312,38 +1200,6 @@
         },
         "additionalProperties": false
       },
-      "OrderItem": {
-        "type": "object",
-        "properties": {
-          "orderItemId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "orderId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "productId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "quantity": {
-            "type": "number",
-            "format": "double"
-          },
-          "unitPrice": {
-            "type": "number",
-            "format": "double"
-          },
-          "order": {
-            "$ref": "#/components/schemas/Order"
-          },
-          "product": {
-            "$ref": "#/components/schemas/Product"
-          }
-        },
-        "additionalProperties": false
-      },
       "OrderItemCreateDto": {
         "type": "object",
         "properties": {
@@ -1362,50 +1218,6 @@
           "unitPrice": {
             "type": "number",
             "format": "double"
-          }
-        },
-        "additionalProperties": false
-      },
-      "Payment": {
-        "type": "object",
-        "properties": {
-          "paymentId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "orderId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "transactionId": {
-            "maxLength": 100,
-            "minLength": 0,
-            "type": "string",
-            "nullable": true
-          },
-          "paymentMethod": {
-            "maxLength": 20,
-            "minLength": 0,
-            "type": "string",
-            "nullable": true
-          },
-          "amount": {
-            "type": "number",
-            "format": "double"
-          },
-          "status": {
-            "maxLength": 20,
-            "minLength": 0,
-            "type": "string",
-            "nullable": true
-          },
-          "paymentDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "order": {
-            "$ref": "#/components/schemas/Order"
           }
         },
         "additionalProperties": false
@@ -1436,102 +1248,6 @@
           },
           "transactionId": {
             "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "Product": {
-        "type": "object",
-        "properties": {
-          "productId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "farmerId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "categoryId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "name": {
-            "maxLength": 100,
-            "minLength": 0,
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "basePrice": {
-            "type": "number",
-            "format": "double"
-          },
-          "currentPrice": {
-            "type": "number",
-            "format": "double"
-          },
-          "stockQuantity": {
-            "type": "number",
-            "format": "double"
-          },
-          "unit": {
-            "maxLength": 20,
-            "minLength": 0,
-            "type": "string",
-            "nullable": true
-          },
-          "harvestDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "expiryDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "imageUrl": {
-            "maxLength": 255,
-            "minLength": 0,
-            "type": "string",
-            "nullable": true
-          },
-          "isActive": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "carts": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Cart"
-            },
-            "nullable": true
-          },
-          "category": {
-            "$ref": "#/components/schemas/Category"
-          },
-          "farmer": {
-            "$ref": "#/components/schemas/User"
-          },
-          "orderItems": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/OrderItem"
-            },
-            "nullable": true
-          },
-          "reviews": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Review"
-            },
             "nullable": true
           }
         },
@@ -1587,44 +1303,6 @@
         },
         "additionalProperties": false
       },
-      "Review": {
-        "type": "object",
-        "properties": {
-          "reviewId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "consumerId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "productId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "rating": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "comment": {
-            "type": "string",
-            "nullable": true
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "consumer": {
-            "$ref": "#/components/schemas/User"
-          },
-          "product": {
-            "$ref": "#/components/schemas/Product"
-          }
-        },
-        "additionalProperties": false
-      },
       "ReviewCreateDto": {
         "type": "object",
         "properties": {
@@ -1652,40 +1330,26 @@
         },
         "additionalProperties": false
       },
-      "User": {
+      "UserCreateDto": {
         "type": "object",
         "properties": {
-          "userId": {
-            "type": "integer",
-            "format": "int32"
-          },
           "fullName": {
-            "maxLength": 100,
-            "minLength": 0,
             "type": "string",
             "nullable": true
           },
           "email": {
-            "maxLength": 100,
-            "minLength": 0,
             "type": "string",
             "nullable": true
           },
           "passwordHash": {
-            "maxLength": 255,
-            "minLength": 0,
             "type": "string",
             "nullable": true
           },
           "role": {
-            "maxLength": 20,
-            "minLength": 0,
             "type": "string",
             "nullable": true
           },
           "phoneNumber": {
-            "maxLength": 15,
-            "minLength": 0,
             "type": "string",
             "nullable": true
           },
@@ -1701,39 +1365,6 @@
           "longitude": {
             "type": "number",
             "format": "double",
-            "nullable": true
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "carts": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Cart"
-            },
-            "nullable": true
-          },
-          "orders": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Order"
-            },
-            "nullable": true
-          },
-          "products": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Product"
-            },
-            "nullable": true
-          },
-          "reviews": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Review"
-            },
             "nullable": true
           }
         },

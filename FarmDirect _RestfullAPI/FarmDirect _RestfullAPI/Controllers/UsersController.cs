@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using FarmDirect__RestfullAPI.DTOs;
 using FarmDirect__RestfullAPI.Models;
+using FluentValidation;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FarmDirect__RestfullAPI.Controllers
 {
@@ -9,9 +12,11 @@ namespace FarmDirect__RestfullAPI.Controllers
     public class UsersController : ControllerBase
     {
         private readonly FarmDirectDBContext _context;
-        public UsersController(FarmDirectDBContext context)
+        private readonly IValidator<UserCreateDto> _userValidator;
+        public UsersController(FarmDirectDBContext context ,IValidator<UserCreateDto> userValidator)
         {
             _context = context;
+            _userValidator = userValidator;
         }
 
         [HttpGet]
@@ -36,33 +41,67 @@ namespace FarmDirect__RestfullAPI.Controllers
 
         [HttpPost]
         [Route("AddUser")]
-        public IActionResult CreateUser([FromBody] User user)
+        public IActionResult CreateUser([FromBody] UserCreateDto dto)
         {
+            var result = _userValidator.Validate(dto);
+            if (!result.IsValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    errors = result.Errors.Select(e => e.ErrorMessage)
+                });
+            }
+
+            var user = new User
+            {
+                FullName = dto.FullName,
+                Email = dto.Email,
+                PasswordHash = dto.PasswordHash,
+                Role = dto.Role,
+                PhoneNumber = dto.PhoneNumber,
+                Address = dto.Address,
+                Latitude = dto.Latitude,
+                Longitude = dto.Longitude
+            };
+
             _context.Users.Add(user);
             _context.SaveChanges();
-            //return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, user);
             return Ok(user);
         }
 
         [HttpPut]
         [Route("UpdateUser/{id:int}")]
-        public IActionResult UpdateUser(int id, [FromBody] User updatedUser)
+        public IActionResult UpdateUser(int id, [FromBody] UserCreateDto dto)
         {
-            var user = _context.Users.Find(id);
+           var user = _context.Users.Find(id);
+
+
             if (user == null)
-            {
+            { 
                 return NotFound();
             }
-            user.FullName = updatedUser.FullName;
-            user.Email = updatedUser.Email;
-            user.PasswordHash = updatedUser.PasswordHash;
-            user.Role = updatedUser.Role;
-            user.PhoneNumber = updatedUser.PhoneNumber;
-            user.Address = updatedUser.Address;
-            user.Latitude = updatedUser.Latitude;
-            user.Longitude = updatedUser.Longitude;
+            var result = _userValidator.Validate(dto);
+            if (!result.IsValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    errors = result.Errors.Select(e => e.ErrorMessage)
+                });
+            }
+                user.FullName = dto.FullName;
+                user.Email = dto.Email;
+                user.PasswordHash = dto.PasswordHash;
+                user.Role = dto.Role;
+                user.PhoneNumber = dto.PhoneNumber;
+                user.Address = dto.Address;
+                user.Latitude = dto.Latitude;
+                user.Longitude = dto.Longitude;
+
             _context.SaveChanges();
             return Ok(user);
+
         }
 
         [HttpDelete]

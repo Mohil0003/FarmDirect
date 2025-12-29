@@ -609,8 +609,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "user",
-        "Type": "FarmDirect__RestfullAPI.Models.User",
+        "Name": "dto",
+        "Type": "FarmDirect__RestfullAPI.DTOs.UserCreateDto",
         "IsRequired": true
       }
     ],
@@ -656,8 +656,8 @@
         "IsRequired": true
       },
       {
-        "Name": "updatedUser",
-        "Type": "FarmDirect__RestfullAPI.Models.User",
+        "Name": "dto",
+        "Type": "FarmDirect__RestfullAPI.DTOs.UserCreateDto",
         "IsRequired": true
       }
     ],

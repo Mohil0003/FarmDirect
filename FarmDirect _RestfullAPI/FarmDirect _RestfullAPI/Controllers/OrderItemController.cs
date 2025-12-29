@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using FarmDirect__RestfullAPI.Models;
 using FarmDirect__RestfullAPI.DTOs;
+using FluentValidation;
 
 namespace FarmDirect__RestfullAPI.Controllers
 {
@@ -10,9 +11,11 @@ namespace FarmDirect__RestfullAPI.Controllers
     public class OrderItemController : ControllerBase
     {
         private readonly FarmDirectDBContext _context;
-        public OrderItemController(FarmDirectDBContext context)
+        private readonly IValidator<OrderItemCreateDto> _orderItemValidator;
+        public OrderItemController(FarmDirectDBContext context,IValidator<OrderItemCreateDto> validator)
         {
             _context = context;
+            _orderItemValidator = validator;
         }
 
         [HttpGet]
@@ -39,6 +42,15 @@ namespace FarmDirect__RestfullAPI.Controllers
         [Route("AddOrderItem")]
         public IActionResult CreateOrderItem([FromBody] OrderItemCreateDto dto)
         {
+            var result = _orderItemValidator.Validate(dto);
+            if (!result.IsValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    errors = result.Errors.Select(e => e.ErrorMessage)
+                });
+            }
             var orderItem = new OrderItem
             {
                 OrderId = dto.OrderId,
@@ -56,6 +68,8 @@ namespace FarmDirect__RestfullAPI.Controllers
         [Route("AddMultipleOrderItems")]
         public IActionResult CreateMultipleOrderItems([FromBody] List<OrderItemCreateDto> dtos)
         {
+       
+
             var orderItems = new List<OrderItem>();
             foreach (var dto in dtos)
             {
@@ -77,10 +91,20 @@ namespace FarmDirect__RestfullAPI.Controllers
         [Route("UpdateOrderItem/{id:int}")]
         public IActionResult UpdateOrderItem(int id, [FromBody] OrderItemCreateDto dto)
         {
+            
             var orderItem = _context.OrderItems.Find(id);
             if (orderItem == null)
             {
                 return NotFound();
+            }
+            var result = _orderItemValidator.Validate(dto);
+            if (!result.IsValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    errors = result.Errors.Select(e => e.ErrorMessage)
+                });
             }
             orderItem.OrderId = dto.OrderId;
             orderItem.ProductId = dto.ProductId;
