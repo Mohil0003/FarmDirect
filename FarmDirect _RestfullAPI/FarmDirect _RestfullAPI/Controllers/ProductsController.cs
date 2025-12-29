@@ -39,16 +39,6 @@ namespace FarmDirect__RestfullAPI.Controllers
             return Ok(product);
         }
 
-        //[HttpPost]
-        //[Route("AddProduct")]
-        //public IActionResult CreateProduct([FromBody] Product product)
-        //{
-        //    _context.Products.Add(product);
-        //    _context.SaveChanges();
-        //    //return CreatedAtAction(nameof(GetProduct), new { id = product.ProductId }, product);
-        //    return Ok(product);
-        //}
-
         [HttpPost]
         [Route("AddProduct")]
         public IActionResult CreateProduct([FromBody] ProductCreateDto dto)

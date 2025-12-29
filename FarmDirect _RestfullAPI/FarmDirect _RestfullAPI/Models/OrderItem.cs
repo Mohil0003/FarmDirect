@@ -11,6 +11,7 @@ public partial class OrderItem
     [Key]
     public int OrderItemId { get; set; }
 
+    [ForeignKey("OrderId")]
     public int OrderId { get; set; }
 
     public int ProductId { get; set; }
@@ -21,7 +22,7 @@ public partial class OrderItem
     [Column(TypeName = "decimal(18, 2)")]
     public decimal UnitPrice { get; set; }
 
-    [ForeignKey("OrderId")]
+    
     [InverseProperty("OrderItems")]
     public virtual Order Order { get; set; } = null!;
 

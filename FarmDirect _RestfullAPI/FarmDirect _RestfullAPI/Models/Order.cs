@@ -10,7 +10,8 @@ public partial class Order
 {
     [Key]
     public int OrderId { get; set; }
-
+    
+    [ForeignKey("ConsumerId")]
     public int ConsumerId { get; set; }
 
     [Column(TypeName = "datetime")]
@@ -24,7 +25,7 @@ public partial class Order
 
     public string DeliveryAddress { get; set; } = null!;
 
-    [ForeignKey("ConsumerId")]
+    
     [InverseProperty("Orders")]
     public virtual User Consumer { get; set; } = null!;
 

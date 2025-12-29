@@ -11,6 +11,7 @@ public partial class Payment
     [Key]
     public int PaymentId { get; set; }
 
+    [ForeignKey("OrderId")]
     public int OrderId { get; set; }
 
     [StringLength(100)]
@@ -28,7 +29,7 @@ public partial class Payment
     [Column(TypeName = "datetime")]
     public DateTime? PaymentDate { get; set; }
 
-    [ForeignKey("OrderId")]
+    
     [InverseProperty("Payments")]
     public virtual Order Order { get; set; } = null!;
 }

@@ -11,7 +11,7 @@ public partial class Cart
 {
     [Key]
     public int CartId { get; set; }
-
+    [ForeignKey("ConsumerId")]
     public int ConsumerId { get; set; }
 
     public int ProductId { get; set; }
@@ -22,7 +22,7 @@ public partial class Cart
     [Column(TypeName = "datetime")]
     public DateTime? AddedAt { get; set; }
 
-    [ForeignKey("ConsumerId")]
+    
     [InverseProperty("Carts")]
     public virtual User Consumer { get; set; } = null!;
 
