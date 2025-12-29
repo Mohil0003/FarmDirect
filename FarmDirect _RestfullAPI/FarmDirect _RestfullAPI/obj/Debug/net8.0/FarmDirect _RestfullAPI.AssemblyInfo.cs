@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FarmDirect _RestfullAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2e3f31560f4d46b33bf1dae0308c9d6074ef0dfd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+47d38cc4abd65a0c4983b90b4f170c9e8a671cc1")]
 [assembly: System.Reflection.AssemblyProductAttribute("FarmDirect _RestfullAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FarmDirect _RestfullAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

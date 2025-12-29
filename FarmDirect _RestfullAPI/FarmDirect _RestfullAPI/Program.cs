@@ -17,6 +17,18 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<FarmDirect__RestfullAPI.Models.FarmDirectDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString")));
 
+
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowReactApp", builder => {
+        builder.WithOrigins("http://localhost:5173") // Your React URL
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
+});
+
+
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -25,6 +37,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors("AllowReactApp");
 
 app.UseAuthorization();
 
