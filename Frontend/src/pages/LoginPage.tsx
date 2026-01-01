@@ -1,43 +1,53 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogIn, Mail, Lock, Sprout, ArrowRight, Github } from 'lucide-react';
+import { Mail, Lock, Sprout, ArrowRight } from 'lucide-react';
+import { login as apiLogin } from '../services/authService';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(null);
 
-    // Simulate API Call
-    await new Promise(resolve => setTimeout(resolve, 800));
+    try {
+      // Call the real API login service
+      const response = await apiLogin({ email, password });
 
-    // MOCK LOGIC (Same as before)
-    let mockRole = 'Consumer';
-    if (email.includes('farmer')) mockRole = 'Farmer';
-    if (email.includes('admin')) mockRole = 'Admin';
+      // Update AuthContext with real user data
+      login({
+        userId: response.user.userId,
+        name: response.user.fullName,
+        email: response.user.email,
+        role: response.role,
+        token: response.token || '',
+      });
 
-    login({
-      name: email.split('@')[0],
-      email,
-      role: mockRole,
-      token: 'fake-jwt'
-    });
-
-    if (mockRole === 'Farmer') navigate('/farmer');
-    else if (mockRole === 'Admin') navigate('/admin');
-    else navigate('/shop');
-
-    setIsLoading(false);
+      // Redirect based on role
+      if (response.role === 'Farmer') {
+        navigate('/farmer');
+      } else if (response.role === 'Admin') {
+        navigate('/admin');
+      } else {
+        navigate('/shop');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Login failed. Please check your credentials.');
+      console.error('Login error:', err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen flex font-sans bg-white">
+    <div className="h-screen flex font-sans bg-white">
 
       {/* LEFT SIDE: Visual & Brand (Hidden on mobile) */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-primary-dark overflow-hidden">
@@ -50,7 +60,7 @@ const LoginPage = () => {
 
         {/* Brand Text Content */}
         <div className="relative z-10 w-full p-16 flex flex-col justify-between">
-          <div className="flex items-center gap-3 text-white/90">
+          <div className="flex items-center gap-3 text-white/90 bg-opacity-10">
             <div className="bg-white/10 p-2 rounded-lg backdrop-blur-sm">
               <Sprout size={24} className="text-secondary" />
             </div>
@@ -133,11 +143,18 @@ const LoginPage = () => {
               <a href="#" className="font-semibold text-primary hover:text-primary-dark">Forgot password?</a>
             </div>
 
+            {/* Error Message */}
+            {error && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-sm text-red-600">{error}</p>
+              </div>
+            )}
+
             {/* Main Button */}
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-primary/30 hover:shadow-primary/50 flex items-center justify-center gap-2 group"
+              className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-primary/30 hover:shadow-primary/50 flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Signing in...' : 'Sign In'}
               {!isLoading && <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />}
@@ -174,17 +191,17 @@ const LoginPage = () => {
             <p className="text-xs text-center text-gray-400 mb-2 uppercase font-bold tracking-wider">Dev Mode: Quick Login</p>
             <div className="flex justify-center gap-3">
               {/* Farmer Button */}
-              <button onClick={() => setEmail('farmer@test.com')} className="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded shadow-sm hover:text-primary transition-colors">
+              <button onClick={() => {setEmail('ramesh@farmer.com'), setPassword('hashed_secret')}} className="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded shadow-sm hover:text-primary transition-colors">
                 Farmer
               </button>
 
               {/* Consumer Button */}
-              <button onClick={() => setEmail('buyer@test.com')} className="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded shadow-sm hover:text-primary transition-colors">
+              <button onClick={() => {setEmail('priya@consumer.com'), setPassword('hashed_secret')}} className="text-xs bg-white border border-gray-200 px-3 py-1.5 rounded shadow-sm hover:text-primary transition-colors">
                 Consumer
               </button>
 
               {/* --- ADD THIS NEW BUTTON --- */}
-              <button onClick={() => setEmail('admin@test.com')} className="text-xs bg-red-50 border border-red-100 text-red-600 px-3 py-1.5 rounded shadow-sm hover:bg-red-100 transition-colors">
+              <button onClick={() =>  {setEmail('admin@farmdirect.com'), setPassword('hashed_secret')}} className="text-xs bg-red-50 border border-red-100 text-red-600 px-3 py-1.5 rounded shadow-sm hover:bg-red-100 transition-colors">
                 Admin
               </button>
             </div>

@@ -7,8 +7,16 @@
       "RelativeMoniker": "D:0:0:{CDD8D6F6-BC4F-42D8-98BC-9B0127886231}|FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI.csproj|solutionrelative:farmdirect _restfullapi\\controllers\\userscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{CDD8D6F6-BC4F-42D8-98BC-9B0127886231}|FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI.csproj|d:\\github\\farmdirect\\farmdirect _restfullapi\\farmdirect _restfullapi\\validator\\uservalidator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CDD8D6F6-BC4F-42D8-98BC-9B0127886231}|FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI.csproj|solutionrelative:farmdirect _restfullapi\\validator\\uservalidator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{CDD8D6F6-BC4F-42D8-98BC-9B0127886231}|FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI.csproj|d:\\github\\farmdirect\\farmdirect _restfullapi\\farmdirect _restfullapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CDD8D6F6-BC4F-42D8-98BC-9B0127886231}|FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI.csproj|solutionrelative:farmdirect _restfullapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CDD8D6F6-BC4F-42D8-98BC-9B0127886231}|FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI.csproj|d:\\github\\farmdirect\\farmdirect _restfullapi\\farmdirect _restfullapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{CDD8D6F6-BC4F-42D8-98BC-9B0127886231}|FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI.csproj|solutionrelative:farmdirect _restfullapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{CDD8D6F6-BC4F-42D8-98BC-9B0127886231}|FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI.csproj|d:\\github\\farmdirect\\farmdirect _restfullapi\\farmdirect _restfullapi\\controllers\\cartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -33,10 +41,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{CDD8D6F6-BC4F-42D8-98BC-9B0127886231}|FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI.csproj|d:\\github\\farmdirect\\farmdirect _restfullapi\\farmdirect _restfullapi\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CDD8D6F6-BC4F-42D8-98BC-9B0127886231}|FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI.csproj|solutionrelative:farmdirect _restfullapi\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CDD8D6F6-BC4F-42D8-98BC-9B0127886231}|FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI.csproj|d:\\github\\farmdirect\\farmdirect _restfullapi\\farmdirect _restfullapi\\validator\\uservalidator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CDD8D6F6-BC4F-42D8-98BC-9B0127886231}|FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI.csproj|solutionrelative:farmdirect _restfullapi\\validator\\uservalidator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{CDD8D6F6-BC4F-42D8-98BC-9B0127886231}|FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI.csproj|d:\\github\\farmdirect\\farmdirect _restfullapi\\farmdirect _restfullapi\\validator\\paymentvalidator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -122,20 +126,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\Program.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\Program.cs",
               "ToolTip": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\Program.cs",
               "RelativeToolTip": "FarmDirect _RestfullAPI\\Program.cs",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAmwC4AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-29T15:45:52.447Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-29T15:45:52.447Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "CartController.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\Controllers\\CartController.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\Controllers\\CartController.cs",
@@ -143,12 +146,11 @@
               "RelativeToolTip": "FarmDirect _RestfullAPI\\Controllers\\CartController.cs",
               "ViewState": "AgIAAFkAAAAAAAAAAADwv2QAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-29T15:11:31.774Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-29T15:11:31.774Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "OrderController.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\Controllers\\OrderController.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\Controllers\\OrderController.cs",
@@ -160,7 +162,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 8,
               "Title": "PaymentController.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\Controllers\\PaymentController.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\Controllers\\PaymentController.cs",
@@ -172,13 +174,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 1,
               "Title": "UserValidator.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\Validator\\UserValidator.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\Validator\\UserValidator.cs",
               "ToolTip": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\Validator\\UserValidator.cs",
               "RelativeToolTip": "FarmDirect _RestfullAPI\\Validator\\UserValidator.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-29T14:42:44.762Z"
             },
@@ -190,7 +192,7 @@
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\Controllers\\UsersController.cs",
               "ToolTip": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\Controllers\\UsersController.cs",
               "RelativeToolTip": "FarmDirect _RestfullAPI\\Controllers\\UsersController.cs",
-              "ViewState": "AgIAAEAAAAAAAAAAAAAkwFwAAAAQAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-29T14:54:46.382Z",
               "EditorCaption": ""
@@ -202,6 +204,18 @@
             {
               "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\appsettings.json",
+              "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\appsettings.json",
+              "ToolTip": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\appsettings.json",
+              "RelativeToolTip": "FarmDirect _RestfullAPI\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-01-01T05:39:01.538Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "CategoryController.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\Controllers\\CategoryController.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\Controllers\\CategoryController.cs",
@@ -213,7 +227,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 9,
               "Title": "ProductsController.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\Controllers\\ProductsController.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\Controllers\\ProductsController.cs",
@@ -225,7 +239,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 7,
               "Title": "OrderItemController.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\Controllers\\OrderItemController.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\Controllers\\OrderItemController.cs",
@@ -237,7 +251,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "PaymentValidator.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\Validator\\PaymentValidator.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\Validator\\PaymentValidator.cs",
@@ -249,7 +263,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "ReviewController.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\Controllers\\ReviewController.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\Controllers\\ReviewController.cs",
@@ -261,7 +275,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 15,
               "Title": "CartCreateDto.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\DTOs\\CartCreateDto.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\DTOs\\CartCreateDto.cs",
@@ -273,7 +287,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "CartValidator.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\Validator\\CartValidator.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\Validator\\CartValidator.cs",
@@ -285,7 +299,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 14,
               "Title": "CategoryCreateDto.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\DTOs\\CategoryCreateDto.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\DTOs\\CategoryCreateDto.cs",
@@ -297,7 +311,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 16,
               "Title": "CategoryValidator.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\Validator\\CategoryValidator.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\Validator\\CategoryValidator.cs",
@@ -309,7 +323,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 17,
               "Title": "OderValidator.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\Validator\\OderValidator.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\Validator\\OderValidator.cs",
@@ -321,7 +335,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "UserCreateDto.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\DTOs\\UserCreateDto.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\DTOs\\UserCreateDto.cs",
@@ -333,7 +347,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 19,
               "Title": "OrderCreateDto.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\DTOs\\OrderCreateDto.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\DTOs\\OrderCreateDto.cs",
@@ -345,7 +359,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 18,
               "Title": "OrderItemCreateDto.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\DTOs\\OrderItemCreateDto.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\DTOs\\OrderItemCreateDto.cs",
@@ -357,7 +371,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 20,
               "Title": "OrderItemValidator.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\Validator\\OrderItemValidator.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\Validator\\OrderItemValidator.cs",
@@ -369,7 +383,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 21,
               "Title": "PaymentCreateDto.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\DTOs\\PaymentCreateDto.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\DTOs\\PaymentCreateDto.cs",
@@ -381,7 +395,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 24,
               "Title": "ProductValidator.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\Validator\\ProductValidator.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\Validator\\ProductValidator.cs",
@@ -393,7 +407,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 23,
               "Title": "ReviewValidator.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\Validator\\ReviewValidator.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\Validator\\ReviewValidator.cs",
@@ -405,7 +419,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 22,
               "Title": "ProductCreateDto.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\DTOs\\ProductCreateDto.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\DTOs\\ProductCreateDto.cs",
@@ -417,7 +431,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 25,
               "Title": "ReviewCreateDto.cs",
               "DocumentMoniker": "D:\\Github\\FarmDirect\\FarmDirect _RestfullAPI\\FarmDirect _RestfullAPI\\DTOs\\ReviewCreateDto.cs",
               "RelativeDocumentMoniker": "FarmDirect _RestfullAPI\\DTOs\\ReviewCreateDto.cs",

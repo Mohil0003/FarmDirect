@@ -1,0 +1,127 @@
+import axiosClient from '../api/axiosClient';
+import type { OrderCreateDto, OrderResponse } from '../models/apiTypes';
+
+/**
+ * Order Service
+ * Handles all order-related API calls
+ */
+
+/**
+ * Get all orders
+ */
+export const getAllOrders = async (): Promise<OrderResponse[]> => {
+  try {
+    const response = await axiosClient.get<OrderResponse[]>('/api/Order/GetAllOrders');
+    return response as OrderResponse[];
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || error.message || 'Failed to fetch orders');
+  }
+};
+
+/**
+ * Get order by ID
+ */
+export const getOrderById = async (id: number): Promise<OrderResponse> => {
+  try {
+    const response = await axiosClient.get<OrderResponse>(`/api/Order/${id}`);
+    return response as OrderResponse;
+  } catch (error: any) {
+    if (error.response?.status === 404) {
+      throw new Error('Order not found');
+    }
+    throw new Error(error.response?.data?.message || error.message || 'Failed to fetch order');
+  }
+};
+
+/**
+ * Get orders by Consumer ID
+ */
+export const getOrdersByConsumerId = async (consumerId: number): Promise<OrderResponse[]> => {
+  try {
+    const allOrders = await getAllOrders();
+    return allOrders.filter(order => order.consumerId === consumerId);
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || error.message || 'Failed to fetch consumer orders');
+  }
+};
+
+/**
+ * Create a new order
+ */
+export const createOrder = async (orderData: OrderCreateDto): Promise<OrderResponse> => {
+  try {
+    const response = await axiosClient.post<OrderResponse>('/api/Order/AddOrder', orderData);
+    return response as OrderResponse;
+  } catch (error: any) {
+    const errors = error.response?.data?.errors || [];
+    throw new Error(errors.length > 0 ? errors.join(', ') : 'Failed to create order');
+  }
+};
+
+/**
+ * Update an existing order
+ */
+export const updateOrder = async (id: number, orderData: OrderCreateDto): Promise<OrderResponse> => {
+  try {
+    const response = await axiosClient.put<OrderResponse>(`/api/Order/UpdateOrder/${id}`, orderData);
+    return response as OrderResponse;
+  } catch (error: any) {
+    if (error.response?.status === 404) {
+      throw new Error('Order not found');
+    }
+    const errors = error.response?.data?.errors || [];
+    throw new Error(errors.length > 0 ? errors.join(', ') : 'Failed to update order');
+  }
+};
+
+/**
+ * Delete an order
+ */
+export const deleteOrder = async (id: number): Promise<void> => {
+  try {
+    await axiosClient.delete(`/api/Order/DeleteOrder/${id}`);
+  } catch (error: any) {
+    if (error.response?.status === 404) {
+      throw new Error('Order not found');
+    }
+    throw new Error(error.response?.data?.message || error.message || 'Failed to delete order');
+  }
+};
+
+/**
+ * Get orders for current user based on role
+ * - Consumer: Orders they purchased
+ * - Farmer: Orders containing their products (needs to fetch order items)
+ */
+export const getMyOrders = async (userId: number, userRole: string): Promise<OrderResponse[]> => {
+  try {
+    const allOrders = await getAllOrders();
+    
+    if (userRole === 'Consumer') {
+      // Return orders where consumerId matches
+      return allOrders.filter(order => order.consumerId === userId);
+    } else if (userRole === 'Farmer') {
+      // For farmers, we need to check if any order items contain their products
+      // This requires fetching order items and products - simplified version here
+      // In a real scenario, you'd want a backend endpoint for this
+      return allOrders; // Placeholder - needs product filtering
+    }
+    
+    return [];
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || error.message || 'Failed to fetch orders');
+  }
+};
+
+/**
+ * Get order details with related data (order items, etc.)
+ */
+export const getOrderDetails = async (orderId: number): Promise<OrderResponse> => {
+  try {
+    const order = await getOrderById(orderId);
+    return order;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || error.message || 'Failed to fetch order details');
+  }
+};
+

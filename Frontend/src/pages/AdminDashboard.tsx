@@ -18,11 +18,11 @@ const AdminDashboard = () => {
     { id: 3, name: 'Green Valley', location: 'Maharashtra', status: 'Active', type: 'Vegetables' },
   ]);
 
-  const handleApprove = (id) => {
+  const handleApprove = (id: number) => {
     setFarmers(farmers.map(f => f.id === id ? { ...f, status: 'Active' } : f));
   };
 
-  const handleReject = (id) => {
+  const handleReject = (id: number) => {
     setFarmers(farmers.map(f => f.id === id ? { ...f, status: 'Rejected' } : f));
   };
 
@@ -135,7 +135,14 @@ const AdminDashboard = () => {
 
 // --- Helper Components ---
 
-const StatCard = ({ title, value, icon, change }) => (
+interface StatCardProps {
+  title: string;
+  value: string | number;
+  icon: React.ReactNode;
+  change: string;
+}
+
+const StatCard: React.FC<StatCardProps> = ({ title, value, icon, change }) => (
   <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
     <div className="flex justify-between items-start mb-4">
       <div>
@@ -150,8 +157,12 @@ const StatCard = ({ title, value, icon, change }) => (
   </div>
 );
 
-const StatusBadge = ({ status }) => {
-  const styles = {
+interface StatusBadgeProps {
+  status: 'Pending' | 'Active' | 'Rejected';
+}
+
+const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
+  const styles: Record<StatusBadgeProps['status'], string> = {
     Pending: 'bg-orange-100 text-orange-700',
     Active: 'bg-green-100 text-green-700',
     Rejected: 'bg-red-100 text-red-700',

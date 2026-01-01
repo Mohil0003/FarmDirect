@@ -2,11 +2,15 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './routes/ProtectedRoute';
 
-// Import your pages (We will create dummy versions below)
-import DashboardPage from './pages/DashboardPage'; // Re-use the one we made!
+// Import your pages
+import DashboardPage from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
-import ShoPage from './pages/ShopPage'
+import ShopPage from './pages/ShopPage';
 import AdminDashboard from './pages/AdminDashboard';
+import ProductDetailsPage from './pages/ProductDetailsPage';
+import CartPage from './pages/CartPage';
+import OrdersPage from './pages/OrdersPage';
+import OrderDetailsPage from './pages/OrderDetailsPage';
 
 function App() {
   return (
@@ -20,21 +24,25 @@ function App() {
 
           {/* --- ADMIN ROUTES --- */}
           <Route element={<ProtectedRoute allowedRoles={['Admin']} />}>
-            {/* This makes /admin load the new dashboard */}
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/orders" element={<OrdersPage />} />
+            <Route path="/orders/:id" element={<OrderDetailsPage />} />
           </Route>
 
           {/* --- FARMER ROUTES --- */}
           <Route element={<ProtectedRoute allowedRoles={['Farmer']} />}>
-            {/* We reuse the DashboardPage we built earlier, but customize it for Farmers */}
             <Route path="/farmer" element={<DashboardPage userType="Farmer" />} />
+            <Route path="/orders" element={<OrdersPage />} />
+            <Route path="/orders/:id" element={<OrderDetailsPage />} />
           </Route>
 
           {/* --- CONSUMER ROUTES --- */}
-          {/* --- CONSUMER ROUTES --- */}
           <Route element={<ProtectedRoute allowedRoles={['Consumer']} />}>
-            {/* THIS IS THE LINE defining the route: */}
-            <Route path="/shop" element={<ShoPage />} />
+            <Route path="/shop" element={<ShopPage />} />
+            <Route path="/products/:id" element={<ProductDetailsPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/orders" element={<OrdersPage />} />
+            <Route path="/orders/:id" element={<OrderDetailsPage />} />
           </Route>
           {/* Default Redirect */}
           <Route path="*" element={<Navigate to="/login" />} />

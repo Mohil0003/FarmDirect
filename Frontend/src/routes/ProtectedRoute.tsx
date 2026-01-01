@@ -1,8 +1,13 @@
+import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 // allowedRoles: An array like ['Admin', 'Farmer']
-const ProtectedRoute = ({ allowedRoles }) => {
+interface ProtectedRouteProps {
+  allowedRoles: string[];
+}
+
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) => {
   const { user } = useAuth();
 
   // 1. Not Logged In? -> Go to Login
