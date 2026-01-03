@@ -5,9 +5,11 @@ import ProtectedRoute from './routes/ProtectedRoute';
 // Import your pages
 import DashboardPage from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import ShopPage from './pages/ShopPage';
 import AdminDashboard from './pages/AdminDashboard';
 import ProductDetailsPage from './pages/ProductDetailsPage';
+import ProductFormPage from './pages/ProductFormPage';
 import CartPage from './pages/CartPage';
 import OrdersPage from './pages/OrdersPage';
 import OrderDetailsPage from './pages/OrderDetailsPage';
@@ -20,6 +22,7 @@ function App() {
 
           {/* Public Routes */}
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
           <Route path="/unauthorized" element={<h1>Access Denied!</h1>} />
 
           {/* --- ADMIN ROUTES --- */}
@@ -32,6 +35,8 @@ function App() {
           {/* --- FARMER ROUTES --- */}
           <Route element={<ProtectedRoute allowedRoles={['Farmer']} />}>
             <Route path="/farmer" element={<DashboardPage userType="Farmer" />} />
+            <Route path="/products/new" element={<ProductFormPage />} />
+            <Route path="/products/:id/edit" element={<ProductFormPage />} />
             <Route path="/orders" element={<OrdersPage />} />
             <Route path="/orders/:id" element={<OrderDetailsPage />} />
           </Route>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Mail, Lock, Sprout, ArrowRight } from 'lucide-react';
 import { login as apiLogin } from '../services/authService';
@@ -183,7 +183,7 @@ const LoginPage = () => {
           </form>
 
           <p className="text-center text-sm text-gray-500">
-            Don't have an account? <a href="/register" className="font-bold text-primary hover:underline">Create account</a>
+            Don't have an account? <Link to="/register" className="font-bold text-primary hover:underline">Create account</Link>
           </p>
 
           {/* Dev Mode Helper */}
