@@ -12,7 +12,7 @@ import type { ProductCreateDto, ProductResponse } from '../models/apiTypes';
 export const getAllProducts = async (): Promise<ProductResponse[]> => {
   try {
     const response = await axiosClient.get<ProductResponse[]>('/api/Products/GetAllProducts');
-    return response as ProductResponse[];
+    return response;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || error.message || 'Failed to fetch products');
   }
@@ -24,7 +24,7 @@ export const getAllProducts = async (): Promise<ProductResponse[]> => {
 export const getProductById = async (id: number): Promise<ProductResponse> => {
   try {
     const response = await axiosClient.get<ProductResponse>(`/api/Products/${id}`);
-    return response as ProductResponse;
+    return response;
   } catch (error: any) {
     if (error.response?.status === 404) {
       throw new Error('Product not found');
@@ -51,7 +51,7 @@ export const getProductsByFarmerId = async (farmerId: number): Promise<ProductRe
 export const createProduct = async (productData: ProductCreateDto): Promise<ProductResponse> => {
   try {
     const response = await axiosClient.post<ProductResponse>('/api/Products/AddProduct', productData);
-    return response as ProductResponse;
+    return response;
   } catch (error: any) {
     const errors = error.response?.data?.errors || [];
     throw new Error(errors.length > 0 ? errors.join(', ') : 'Failed to create product');
@@ -64,10 +64,11 @@ export const createProduct = async (productData: ProductCreateDto): Promise<Prod
 export const updateProduct = async (id: number, productData: ProductCreateDto): Promise<ProductResponse> => {
   try {
     const response = await axiosClient.put<ProductResponse>(`/api/Products/UpdateProduct/${id}`, productData);
-    return response as ProductResponse;
+    return response;
   } catch (error: any) {
     if (error.response?.status === 404) {
       throw new Error('Product not found');
+
     }
     const errors = error.response?.data?.errors || [];
     throw new Error(errors.length > 0 ? errors.join(', ') : 'Failed to update product');
@@ -106,7 +107,7 @@ export const getActiveProducts = async (): Promise<ProductResponse[]> => {
 export const getProductReviews = async (productId: number): Promise<any[]> => {
   try {
     const response = await axiosClient.get<any[]>('/api/Review/GetAllReviews');
-    return (response as any[]).filter((review: any) => review.productId === productId);
+    return response.filter((review: any) => review.productId === productId);
   } catch (error: any) {
     throw new Error(error.response?.data?.message || error.message || 'Failed to fetch product reviews');
   }

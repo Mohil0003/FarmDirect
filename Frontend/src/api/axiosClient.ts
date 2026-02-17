@@ -1,14 +1,23 @@
-import axios, { AxiosError, type InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosError, type InternalAxiosRequestConfig, type AxiosInstance } from 'axios';
 
 // Base URL from environment variable, fallback to localhost:5234
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5234';
+
+// Custom Axios instance type that unwraps response.data
+interface CustomAxiosInstance extends Omit<AxiosInstance, 'get' | 'post' | 'put' | 'patch' | 'delete'> {
+  get<T = any>(url: string, config?: any): Promise<T>;
+  post<T = any>(url: string, data?: any, config?: any): Promise<T>;
+  put<T = any>(url: string, data?: any, config?: any): Promise<T>;
+  patch<T = any>(url: string, data?: any, config?: any): Promise<T>;
+  delete<T = any>(url: string, config?: any): Promise<T>;
+}
 
 const axiosClient = axios.create({
   baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-});
+}) as CustomAxiosInstance;
 
 // Request Interceptor: Add Authorization token if available
 axiosClient.interceptors.request.use(
@@ -44,3 +53,4 @@ axiosClient.interceptors.response.use(
 );
 
 export default axiosClient;
+export type { CustomAxiosInstance };

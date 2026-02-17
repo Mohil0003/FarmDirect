@@ -1,18 +1,19 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { 
-  Mail, 
-  Lock, 
-  User, 
-  Phone, 
-  MapPin, 
-  Sprout, 
+import {
+  Mail,
+  Lock,
+  User,
+  Phone,
+  MapPin,
+  Sprout,
   ArrowRight,
   Loader2,
   Eye,
   EyeOff
 } from 'lucide-react';
 import { registerFarmer, registerConsumer } from '../services/authService';
+import LocationAutocomplete from '../components/LocationAutocomplete';
 
 type UserRole = 'Farmer' | 'Consumer';
 
@@ -27,6 +28,11 @@ const RegisterPage = () => {
     phoneNumber: '',
     address: '',
   });
+  const [location, setLocation] = useState<{
+    address: string;
+    latitude: number;
+    longitude: number;
+  }>({ address: '', latitude: 0, longitude: 0 });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -70,23 +76,30 @@ const RegisterPage = () => {
       return;
     }
 
+    // Validate location for farmers
+    if (userRole === 'Farmer' && !location.address) {
+      setError('Farm location is required for farmers');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
       const registerFunction = userRole === 'Farmer' ? registerFarmer : registerConsumer;
-      
+
       await registerFunction({
         fullName: formData.fullName.trim(),
         email: formData.email.trim(),
         passwordHash: formData.password, // Note: Backend should hash this
         phoneNumber: formData.phoneNumber.trim(),
-        address: formData.address.trim() || undefined,
-        role: userRole,
+        address: userRole === 'Farmer' ? location.address : formData.address.trim() || undefined,
+        latitude: userRole === 'Farmer' ? location.latitude : undefined,
+        longitude: userRole === 'Farmer' ? location.longitude : undefined,
       });
 
       // Redirect to login page with success message
-      navigate('/login', { 
-        state: { message: 'Registration successful! Please login.' } 
+      navigate('/login', {
+        state: { message: 'Registration successful! Please login.' }
       });
     } catch (err: any) {
       setError(err.message || 'Registration failed. Please try again.');
@@ -119,11 +132,10 @@ const RegisterPage = () => {
               <button
                 type="button"
                 onClick={() => setUserRole('Consumer')}
-                className={`p-4 rounded-lg border-2 transition-all ${
-                  userRole === 'Consumer'
-                    ? 'border-primary bg-primary/5 text-primary'
-                    : 'border-gray-200 hover:border-gray-300 text-gray-700'
-                }`}
+                className={`p-4 rounded-lg border-2 transition-all ${userRole === 'Consumer'
+                  ? 'border-primary bg-primary/5 text-primary'
+                  : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                  }`}
               >
                 <div className="font-semibold mb-1">Consumer</div>
                 <div className="text-xs text-gray-500">Buy fresh produce</div>
@@ -131,11 +143,10 @@ const RegisterPage = () => {
               <button
                 type="button"
                 onClick={() => setUserRole('Farmer')}
-                className={`p-4 rounded-lg border-2 transition-all ${
-                  userRole === 'Farmer'
-                    ? 'border-primary bg-primary/5 text-primary'
-                    : 'border-gray-200 hover:border-gray-300 text-gray-700'
-                }`}
+                className={`p-4 rounded-lg border-2 transition-all ${userRole === 'Farmer'
+                  ? 'border-primary bg-primary/5 text-primary'
+                  : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                  }`}
               >
                 <div className="font-semibold mb-1">Farmer</div>
                 <div className="text-xs text-gray-500">Sell your products</div>
@@ -213,24 +224,36 @@ const RegisterPage = () => {
                 </div>
               </div>
 
-              {/* Address */}
-              <div>
-                <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
-                  Address (Optional)
-                </label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-3.5 text-gray-400" size={18} />
-                  <textarea
-                    id="address"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    rows={3}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors resize-none"
-                    placeholder="Enter your address"
-                  />
+              {/* Address / Location - Different for Farmer vs Consumer */}
+              {userRole === 'Farmer' ? (
+                <LocationAutocomplete
+                  value={location.address}
+                  onChange={(locationData) => {
+                    setLocation(locationData);
+                    setError(null);
+                  }}
+                  placeholder="Search for your farm location..."
+                  required={true}
+                />
+              ) : (
+                <div>
+                  <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
+                    Address (Optional)
+                  </label>
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-3.5 text-gray-400" size={18} />
+                    <textarea
+                      id="address"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      rows={3}
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors resize-none"
+                      placeholder="Enter your address"
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Password */}
               <div>

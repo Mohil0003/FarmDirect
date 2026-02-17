@@ -1,120 +1,51 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ShoppingCart, Trash2, Plus, Minus, Loader2, ArrowRight } from 'lucide-react';
-import { getCart, updateCartItem, removeFromCart } from '../services/cartService';
-import { getProductById } from '../services/productService';
+import { useCart } from '../context/CartContext';
 import { createOrder } from '../services/orderService';
 import { useAuth } from '../context/AuthContext';
-import type { CartResponse, ProductResponse } from '../models/apiTypes';
-
-interface CartItemWithProduct extends CartResponse {
-  product?: ProductResponse;
-}
+import { calculateDiscountedPrice, getUrgencyLevel, getUrgencyColorClasses } from '../utils/priceUtils';
+import { orderToasts } from '../utils/toastUtils';
 
 const CartPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  
-  const [cartItems, setCartItems] = useState<CartItemWithProduct[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [updatingItems, setUpdatingItems] = useState<Set<number>>(new Set());
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const { cartItems, isLoading, error, updateCart, removeFromCart, refreshCart } = useCart();
+  const [isCheckingOut, setIsCheckingOut] = React.useState(false);
 
   useEffect(() => {
     if (user) {
-      loadCart();
+      refreshCart();
     } else {
       navigate('/login');
     }
   }, [user]);
 
-  const loadCart = async () => {
-    if (!user) return;
-    
-    try {
-      setIsLoading(true);
-      setError(null);
-      
-      const carts = await getCart(user.userId);
-      
-      // Fetch product details for each cart item
-      const itemsWithProducts = await Promise.all(
-        carts.map(async (cart) => {
-          try {
-            const product = await getProductById(cart.productId);
-            return { ...cart, product };
-          } catch {
-            return { ...cart, product: undefined };
-          }
-        })
-      );
-      
-      setCartItems(itemsWithProducts);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load cart');
-      console.error('Error loading cart:', err);
-    } finally {
-      setIsLoading(false);
-    }
+  const handleUpdateQuantity = async (cartId: number, newQuantity: number, productId: number, productName?: string) => {
+    await updateCart(cartId, newQuantity, productId, productName);
   };
 
-  const handleUpdateQuantity = async (cartId: number, newQuantity: number, productId: number) => {
-    if (newQuantity <= 0) {
-      handleRemoveItem(cartId);
-      return;
-    }
-    
-    if (!user) return;
-    
-    try {
-      setUpdatingItems(prev => new Set(prev).add(cartId));
-      await updateCartItem(cartId, newQuantity, user.userId, productId);
-      await loadCart(); // Reload cart to reflect changes
-    } catch (err: any) {
-      alert(err.message || 'Failed to update quantity');
-    } finally {
-      setUpdatingItems(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(cartId);
-        return newSet;
-      });
-    }
-  };
-
-  const handleRemoveItem = async (cartId: number) => {
+  const handleRemoveItem = async (cartId: number, productName?: string) => {
     if (!confirm('Remove this item from cart?')) return;
-    
-    try {
-      setUpdatingItems(prev => new Set(prev).add(cartId));
-      await removeFromCart(cartId);
-      await loadCart();
-    } catch (err: any) {
-      alert(err.message || 'Failed to remove item');
-      setUpdatingItems(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(cartId);
-        return newSet;
-      });
-    }
+    await removeFromCart(cartId, productName);
   };
 
   const handleCheckout = async () => {
     if (!user) return;
-    
+
     try {
       setIsCheckingOut(true);
-      
-      // Calculate total
+
+      // Calculate total with dynamic pricing
       const subtotal = cartItems.reduce((sum, item) => {
-        const price = item.product?.currentPrice || 0;
-        return sum + (price * item.quantity);
+        if (!item.product) return sum;
+        const pricing = calculateDiscountedPrice(item.product.basePrice, item.product.expiryDate);
+        return sum + (pricing.currentPrice * item.quantity);
       }, 0);
-      
+
       // For now, we'll use the user's address as delivery address
-      // In a real app, you'd have a delivery address form
       const deliveryAddress = user.email; // Placeholder
-      
+
       // Create order
       const order = await createOrder({
         consumerId: user.userId,
@@ -122,23 +53,29 @@ const CartPage = () => {
         deliveryAddress,
         status: 'Pending',
       });
-      
-      // TODO: Create order items for each cart item
-      // TODO: Clear cart after successful order
-      
+
+      orderToasts.created(order.orderId);
       navigate(`/orders/${order.orderId}`);
     } catch (err: any) {
-      alert(err.message || 'Failed to checkout');
+      orderToasts.failed(err.message || 'Unknown error');
     } finally {
       setIsCheckingOut(false);
     }
   };
 
+  // Calculate totals with dynamic pricing
   const subtotal = cartItems.reduce((sum, item) => {
-    const price = item.product?.currentPrice || 0;
-    return sum + (price * item.quantity);
+    if (!item.product) return sum;
+    const pricing = calculateDiscountedPrice(item.product.basePrice, item.product.expiryDate);
+    return sum + (pricing.currentPrice * item.quantity);
   }, 0);
 
+  const originalTotal = cartItems.reduce((sum, item) => {
+    if (!item.product) return sum;
+    return sum + (item.product.basePrice * item.quantity);
+  }, 0);
+
+  const totalSavings = originalTotal - subtotal;
   const tax = subtotal * 0.05; // 5% tax (example)
   const total = subtotal + tax;
 
@@ -155,7 +92,7 @@ const CartPage = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 mb-4">{error}</p>
-          <button onClick={loadCart} className="text-primary hover:underline">
+          <button onClick={refreshCart} className="text-primary hover:underline">
             Try again
           </button>
         </div>
@@ -203,10 +140,16 @@ const CartPage = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {cartItems.map((item) => {
-                    const productPrice = item.product?.currentPrice || 0;
-                    const itemTotal = productPrice * item.quantity;
-                    const isUpdating = updatingItems.has(item.cartId);
-                    
+                    if (!item.product) return null;
+
+                    // Calculate dynamic pricing
+                    const pricing = calculateDiscountedPrice(item.product.basePrice, item.product.expiryDate);
+                    const itemTotal = pricing.currentPrice * item.quantity;
+                    const originalTotal = item.product.basePrice * item.quantity;
+                    const itemSavings = originalTotal - itemTotal;
+                    const urgency = getUrgencyLevel(pricing.daysUntilExpiry);
+                    const urgencyColors = getUrgencyColorClasses(urgency);
+
                     return (
                       <tr key={item.cartId} className="hover:bg-gray-50">
                         <td className="px-6 py-4">
@@ -230,41 +173,62 @@ const CartPage = () => {
                                 {item.product?.name || 'Product'}
                               </Link>
                               {item.product && (
-                                <p className="text-sm text-gray-500">{item.product.unit}</p>
+                                <>
+                                  <p className="text-sm text-gray-500">{item.product.unit}</p>
+                                  {pricing.daysUntilExpiry <= 7 && (
+                                    <div className={`text-xs ${urgencyColors.text} font-medium mt-1`}>
+                                      {pricing.daysUntilExpiry === 0 ? 'Expires today!' : `${pricing.daysUntilExpiry} days left`}
+                                    </div>
+                                  )}
+                                </>
                               )}
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="font-semibold text-gray-800">₹{productPrice.toFixed(2)}</span>
+                          <div>
+                            <span className="font-semibold text-gray-800">₹{pricing.currentPrice.toFixed(2)}</span>
+                            {pricing.discountPercentage > 0 && (
+                              <>
+                                <div className="text-xs text-gray-400 line-through">₹{item.product.basePrice.toFixed(2)}</div>
+                                <div className="text-xs text-green-600 font-semibold">{pricing.discountPercentage}% OFF</div>
+                              </>
+                            )}
+                          </div>
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
                             <button
-                              onClick={() => handleUpdateQuantity(item.cartId, item.quantity - 1, item.productId)}
-                              disabled={isUpdating}
+                              onClick={() => handleUpdateQuantity(item.cartId, item.quantity - 1, item.productId, item.product?.name)}
+                              disabled={isLoading}
                               className="p-1 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50"
                             >
                               <Minus size={16} />
                             </button>
                             <span className="w-12 text-center font-semibold">{item.quantity}</span>
                             <button
-                              onClick={() => handleUpdateQuantity(item.cartId, item.quantity + 1, item.productId)}
-                              disabled={isUpdating || (item.product && item.quantity >= item.product.stockQuantity)}
+                              onClick={() => handleUpdateQuantity(item.cartId, item.quantity + 1, item.productId, item.product?.name)}
+                              disabled={isLoading || (item.product && item.quantity >= item.product.stockQuantity)}
                               className="p-1 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50"
                             >
                               <Plus size={16} />
                             </button>
-                            {isUpdating && <Loader2 className="animate-spin text-primary ml-2" size={16} />}
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="font-bold text-gray-800">₹{itemTotal.toFixed(2)}</span>
+                          <div>
+                            <span className="font-bold text-gray-800">₹{itemTotal.toFixed(2)}</span>
+                            {itemSavings > 0 && (
+                              <div className="text-xs text-green-600 font-semibold">
+                                Saved ₹{itemSavings.toFixed(2)}
+                              </div>
+                            )}
+                          </div>
                         </td>
                         <td className="px-6 py-4 text-right">
                           <button
-                            onClick={() => handleRemoveItem(item.cartId)}
-                            disabled={isUpdating}
+                            onClick={() => handleRemoveItem(item.cartId, item.product?.name)}
+                            disabled={isLoading}
                             className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
                             title="Remove"
                           >
@@ -283,12 +247,18 @@ const CartPage = () => {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-lg p-6 sticky top-4">
               <h2 className="text-xl font-bold text-gray-800 mb-4">Order Summary</h2>
-              
+
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between text-gray-600">
                   <span>Subtotal</span>
                   <span className="font-semibold">₹{subtotal.toFixed(2)}</span>
                 </div>
+                {totalSavings > 0 && (
+                  <div className="flex justify-between text-green-600">
+                    <span className="font-medium">You Save</span>
+                    <span className="font-bold">-₹{totalSavings.toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-gray-600">
                   <span>Tax (5%)</span>
                   <span className="font-semibold">₹{tax.toFixed(2)}</span>

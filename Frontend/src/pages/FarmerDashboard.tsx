@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { MapPin, Edit2, Save } from 'lucide-react';
 import LocationMap from '../components/common/LocationMap';
 
@@ -9,8 +9,8 @@ import LocationMap from '../components/common/LocationMap';
 const FarmerDashboard = () => {
   // In a real app, these would come from your API/User context
   // Example: Farmer's current saved location (Pune, Maharashtra, India)
-  const [farmerLat, setFarmerLat] = useState<number | null>(18.5204);
-  const [farmerLng, setFarmerLng] = useState<number | null>(73.8567);
+  const [farmerLat, _setFarmerLat] = useState<number | null>(18.5204);
+  const [farmerLng, _setFarmerLng] = useState<number | null>(73.8567);
   const [isEditing, setIsEditing] = useState(false);
 
   // Handle location updates (in real app, this would call your API)

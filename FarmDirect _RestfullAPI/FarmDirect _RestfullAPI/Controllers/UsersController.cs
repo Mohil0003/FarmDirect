@@ -1,5 +1,6 @@
 ﻿using FarmDirect__RestfullAPI.DTOs;
 using FarmDirect__RestfullAPI.Models;
+using Microsoft.EntityFrameworkCore;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -116,6 +117,28 @@ namespace FarmDirect__RestfullAPI.Controllers
             _context.Users.Remove(user);
             _context.SaveChanges();
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("GetFarmerStats")]
+        public async Task<IActionResult> GetFarmerStats()
+        {
+            var farmerStats = await _context.Users
+                .Where(u => u.Role == "Farmer")
+                .Select(u => new FarmerStatsDto
+                {
+                    FarmerId = u.UserId,
+                    FarmerName = u.FullName,
+                    ProductCount = u.Products.Count,
+                    Products = u.Products.Select(p => new ProductStatDto
+                    {
+                        ProductName = p.Name,
+                        StockQuantity = p.StockQuantity
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            return Ok(farmerStats);
         }
 
     }

@@ -21,12 +21,12 @@ export const login = async (credentials: LoginRequest): Promise<LoginResponse> =
   try {
     // TODO: Replace this with proper authentication endpoint
     // Example: const response = await axiosClient.post('/api/Auth/Login', credentials);
-    
+
     // Temporary workaround: Get all users and find matching email
     // WARNING: This is NOT secure and should be replaced with proper authentication
     const users = await axiosClient.get<UserResponse[]>('/api/Users/GetAllUsers') as UserResponse[];
     const user = users.find((u: UserResponse) => u.email === credentials.email);
-    
+
     if (!user) {
       throw new Error('Invalid email or password');
     }
@@ -43,14 +43,14 @@ export const login = async (credentials: LoginRequest): Promise<LoginResponse> =
 
     // TODO: When you add JWT, the token should come from the backend
     const token = 'temp-token-' + Date.now(); // Temporary token
-    
+
     // Store token and user in localStorage
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(userWithoutPassword));
 
     return {
       token,
-      user: userWithoutPassword,
+      user: userWithoutPassword as UserResponse,
       role: user.role,
     };
   } catch (error: any) {
@@ -64,10 +64,10 @@ export const login = async (credentials: LoginRequest): Promise<LoginResponse> =
 export const register = async (userData: UserCreateDto): Promise<UserResponse> => {
   try {
     const response = await axiosClient.post<UserResponse>('/api/Users/AddUser', userData);
-    
+
     // Remove passwordHash from response
     const { passwordHash, ...userWithoutPassword } = response;
-    
+
     return userWithoutPassword as UserResponse;
   } catch (error: any) {
     const errors = error.response?.data?.errors || [];
@@ -103,7 +103,7 @@ export const logout = (): void => {
 export const getCurrentUser = (): UserResponse | null => {
   const userStr = localStorage.getItem('user');
   if (!userStr) return null;
-  
+
   try {
     return JSON.parse(userStr);
   } catch {

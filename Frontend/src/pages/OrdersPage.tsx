@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Package, Loader2, Eye } from 'lucide-react';
 import { getMyOrders, getAllOrders } from '../services/orderService';
-import { getProductById } from '../services/productService';
 import { getUserById } from '../services/userService';
 import { useAuth } from '../context/AuthContext';
 import type { OrderResponse } from '../models/apiTypes';
@@ -15,7 +14,7 @@ interface OrderWithDetails extends OrderResponse {
 const OrdersPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  
+
   const [orders, setOrders] = useState<OrderWithDetails[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,17 +29,17 @@ const OrdersPage = () => {
 
   const loadOrders = async () => {
     if (!user) return;
-    
+
     try {
       setIsLoading(true);
       setError(null);
-      
+
       let ordersData: OrderResponse[] = [];
-      
+
       if (user.role === 'Consumer') {
         // Consumer sees their own orders
         ordersData = await getMyOrders(user.userId, user.role);
-        
+
         // Add consumer name (it's themselves)
         const ordersWithDetails: OrderWithDetails[] = ordersData.map(order => ({
           ...order,
@@ -51,10 +50,10 @@ const OrdersPage = () => {
         // Farmer sees orders containing their products
         // For now, we'll show all orders - in production, filter by products
         const allOrders = await getAllOrders();
-        
+
         // TODO: Filter orders by products belonging to this farmer
         // This would require fetching order items and checking product farmerId
-        
+
         // Add consumer names
         const ordersWithDetails = await Promise.all(
           allOrders.map(async (order) => {
@@ -69,7 +68,7 @@ const OrdersPage = () => {
             }
           })
         );
-        
+
         setOrders(ordersWithDetails);
       } else {
         // Admin sees all orders
@@ -99,7 +98,7 @@ const OrdersPage = () => {
 
   const getStatusBadgeClass = (status?: string) => {
     const statusLower = (status || 'Pending').toLowerCase();
-    
+
     if (statusLower === 'pending') {
       return 'bg-yellow-100 text-yellow-700';
     } else if (statusLower === 'shipped' || statusLower === 'processing') {
@@ -188,10 +187,10 @@ const OrdersPage = () => {
                       <td className="px-6 py-4 text-gray-700">
                         {order.orderDate
                           ? new Date(order.orderDate).toLocaleDateString('en-IN', {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric',
-                            })
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          })
                           : 'N/A'}
                       </td>
                       {user?.role !== 'Consumer' && (

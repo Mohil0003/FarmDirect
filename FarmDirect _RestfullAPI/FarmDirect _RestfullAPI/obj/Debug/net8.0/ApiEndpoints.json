@@ -644,6 +644,16 @@
   },
   {
     "ContainingType": "FarmDirect__RestfullAPI.Controllers.UsersController",
+    "Method": "GetFarmerStats",
+    "RelativePath": "api/Users/GetFarmerStats",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FarmDirect__RestfullAPI.Controllers.UsersController",
     "Method": "UpdateUser",
     "RelativePath": "api/Users/UpdateUser/{id}",
     "HttpMethod": "PUT",

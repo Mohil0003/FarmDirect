@@ -1,25 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, ShoppingCart, Star, Loader2, MapPin } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Star, Loader2, MapPin, Tag } from 'lucide-react';
 import LocationMap from '../components/common/LocationMap';
 import { getProductById } from '../services/productService';
 import { getProductReviews, addReview } from '../services/reviewService';
-import { addToCart } from '../services/cartService';
 import { getUserById } from '../services/userService';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
+import { calculateDiscountedPrice, getUrgencyLevel, getUrgencyLabel, getUrgencyColorClasses } from '../utils/priceUtils';
 import type { ProductResponse, ReviewResponse, UserResponse } from '../models/apiTypes';
 
 const ProductDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  
+  const { addToCart: addToCartContext } = useCart();
+
   const [product, setProduct] = useState<ProductResponse | null>(null);
   const [farmer, setFarmer] = useState<UserResponse | null>(null);
   const [reviews, setReviews] = useState<ReviewResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+  const [quantity, setQuantity] = useState(1);
+
   // Review form state
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [reviewRating, setReviewRating] = useState(5);
@@ -37,15 +40,15 @@ const ProductDetailsPage = () => {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const productId = parseInt(id || '0');
       const productData = await getProductById(productId);
       setProduct(productData);
-      
+
       // Fetch farmer data for location
       const farmerData = await getUserById(productData.farmerId);
       setFarmer(farmerData);
-      
+
       // Fetch reviews
       const reviewsData = await getProductReviews(productId);
       setReviews(reviewsData);
@@ -59,14 +62,12 @@ const ProductDetailsPage = () => {
 
   const handleAddToCart = async () => {
     if (!user || !product) return;
-    
+
     try {
       setIsAddingToCart(true);
-      await addToCart(product.productId, 1, user.userId);
-      // You might want to show a success message or update cart context
-      alert('Added to cart!');
+      await addToCartContext(product.productId, quantity, product.name);
     } catch (err: any) {
-      alert(err.message || 'Failed to add to cart');
+      // Error is handled by CartContext with toast
     } finally {
       setIsAddingToCart(false);
     }
@@ -75,7 +76,7 @@ const ProductDetailsPage = () => {
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user || !product) return;
-    
+
     try {
       setIsSubmittingReview(true);
       const newReview = await addReview(product.productId, reviewRating, reviewComment, user.userId);
@@ -115,6 +116,12 @@ const ProductDetailsPage = () => {
     ? reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.length
     : 0;
 
+  // Calculate dynamic pricing
+  const pricing = product ? calculateDiscountedPrice(product.basePrice, product.expiryDate) : null;
+  const urgency = pricing ? getUrgencyLevel(pricing.daysUntilExpiry) : 'fresh';
+  const urgencyColors = getUrgencyColorClasses(urgency);
+  const urgencyLabel = pricing ? getUrgencyLabel(pricing.daysUntilExpiry) : '';
+
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-7xl mx-auto">
@@ -129,7 +136,7 @@ const ProductDetailsPage = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Left Column: Product Image */}
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden relative">
             <div className="aspect-square bg-gray-100 flex items-center justify-center">
               {product.imageUrl ? (
                 <img
@@ -145,18 +152,49 @@ const ProductDetailsPage = () => {
                 <div className="text-8xl">🌾</div>
               )}
             </div>
+
+            {/* Discount Badge on Image */}
+            {pricing && pricing.discountPercentage > 0 && (
+              <div className="absolute top-4 left-4 bg-red-500 text-white px-4 py-2 text-lg font-bold rounded-full shadow-lg flex items-center gap-2">
+                <Tag size={20} />
+                {pricing.discountPercentage}% OFF
+              </div>
+            )}
+
+            {/* Urgency Badge */}
+            {pricing && (
+              <div className={`absolute bottom-4 right-4 ${urgencyColors.bg} ${urgencyColors.text} px-3 py-2 text-sm font-semibold rounded-lg`}>
+                {urgencyLabel}
+              </div>
+            )}
           </div>
 
           {/* Right Column: Product Details */}
           <div className="bg-white rounded-xl shadow-lg p-6">
             <h1 className="text-3xl font-bold text-gray-800 mb-4">{product.name}</h1>
-            
+
             {/* Price */}
             <div className="mb-4">
-              <span className="text-3xl font-bold text-primary">₹{product.currentPrice}</span>
-              <span className="text-gray-500 ml-2">/{product.unit}</span>
-              {product.basePrice !== product.currentPrice && (
-                <div className="text-lg text-gray-400 line-through">₹{product.basePrice}</div>
+              {pricing && (
+                <>
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-4xl font-bold text-primary">₹{pricing.currentPrice.toFixed(2)}</span>
+                    <span className="text-gray-500 text-lg">/{product.unit}</span>
+                  </div>
+                  {pricing.discountPercentage > 0 && (
+                    <div className="mt-2">
+                      <span className="text-xl text-gray-400 line-through">₹{product.basePrice.toFixed(2)}</span>
+                      <span className="ml-3 text-green-600 font-bold text-lg">
+                        Save ₹{pricing.savings.toFixed(2)} ({pricing.discountPercentage}% OFF)
+                      </span>
+                    </div>
+                  )}
+                  {pricing.daysUntilExpiry <= 7 && (
+                    <div className={`mt-2 ${urgencyColors.text} font-medium`}>
+                      {pricing.daysUntilExpiry === 0 ? '⚠️ Expires today!' : `📅 ${pricing.daysUntilExpiry} days until expiry`}
+                    </div>
+                  )}
+                </>
               )}
             </div>
 
@@ -201,6 +239,28 @@ const ProductDetailsPage = () => {
               </div>
             </div>
 
+            {/* Quantity Selector */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                  -
+                </button>
+                <span className="text-xl font-semibold w-12 text-center">{quantity}</span>
+                <button
+                  onClick={() => setQuantity(Math.min(product.stockQuantity, quantity + 1))}
+                  disabled={quantity >= product.stockQuantity}
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  +
+                </button>
+                <span className="text-sm text-gray-500">({product.unit})</span>
+              </div>
+            </div>
+
             {/* Add to Cart Button */}
             <button
               onClick={handleAddToCart}
@@ -215,10 +275,15 @@ const ProductDetailsPage = () => {
               ) : (
                 <>
                   <ShoppingCart size={20} />
-                  Add to Cart
+                  Add {quantity} to Cart
                 </>
               )}
             </button>
+            {!user && (
+              <p className="text-sm text-gray-500 text-center mt-2">
+                Please <Link to="/login" className="text-primary hover:underline">login</Link> to add items to cart
+              </p>
+            )}
           </div>
         </div>
 

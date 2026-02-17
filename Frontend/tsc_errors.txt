@@ -1,0 +1,7 @@
+﻿src/pages/FarmerDashboard.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/pages/FarmerDashboard.tsx(12,21): error TS6133: 'setFarmerLat' is declared but its value is never read.
+src/pages/FarmerDashboard.tsx(13,21): error TS6133: 'setFarmerLng' is declared but its value is never read.
+src/pages/OrdersPage.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/pages/OrdersPage.tsx(5,1): error TS6133: 'getProductById' is declared but its value is never read.
+src/pages/ProductDetails.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+src/services/authService.ts(53,7): error TS2741: Property 'passwordHash' is missing in type '{ userId: number; fullName: string; email: string; role: string; phoneNumber: string; address?: string | undefined; latitude?: number | undefined; longitude?: number | undefined; createdAt?: string | undefined; }' but required in type 'UserResponse'.

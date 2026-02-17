@@ -1132,6 +1132,18 @@
           }
         }
       }
+    },
+    "/api/Users/GetFarmerStats": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {

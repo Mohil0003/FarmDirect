@@ -55,7 +55,9 @@ namespace FarmDirect__RestfullAPI.Controllers
             var cart = new Cart
             {
                 ConsumerId = dto.ConsumerId,
-                AddedAt = dto.AddedAt?? DateTime.UtcNow
+                ProductId = dto.ProductId,
+                Quantity = dto.Quantity,
+                AddedAt = dto.AddedAt ?? DateTime.UtcNow
             };
             _context.Carts.Add(cart);
             _context.SaveChanges();
@@ -72,6 +74,8 @@ namespace FarmDirect__RestfullAPI.Controllers
                 var cart = new Cart
                 {
                     ConsumerId = dto.ConsumerId,
+                    ProductId = dto.ProductId,
+                    Quantity = dto.Quantity,
                     AddedAt = dto.AddedAt ?? DateTime.UtcNow
                 };
                 carts.Add(cart);
@@ -100,6 +104,8 @@ namespace FarmDirect__RestfullAPI.Controllers
                 });
             }
             cart.ConsumerId = dto.ConsumerId;
+            cart.ProductId = dto.ProductId;
+            cart.Quantity = dto.Quantity;
             cart.AddedAt = dto.AddedAt ?? cart.AddedAt;
             _context.SaveChanges();
             return Ok(cart);

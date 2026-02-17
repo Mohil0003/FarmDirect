@@ -171,6 +171,19 @@ export interface ReviewResponse {
   createdAt?: string;
 }
 
+// ========== ADMIN TYPES ==========
+export interface ProductStatResponse {
+  productName: string;
+  stockQuantity: number;
+}
+
+export interface FarmerStatsResponse {
+  farmerId: number;
+  farmerName: string;
+  productCount: number;
+  products: ProductStatResponse[];
+}
+
 // ========== API ERROR RESPONSE ==========
 export interface ApiErrorResponse {
   success: false;
@@ -183,3 +196,18 @@ export interface ApiSuccessResponse<T> {
   data: T;
 }
 
+// ========== FARMER ORDER DETAILS ==========
+export interface FarmerOrderItem {
+  productId: number;
+  productName: string;
+  quantity: number;
+  unitPrice: number;
+  unit: string;
+}
+
+export interface FarmerOrderWithDetails extends OrderResponse {
+  consumerName: string;
+  consumerEmail?: string;
+  items: FarmerOrderItem[];
+  itemCount: number;
+}

@@ -1,4 +1,3 @@
-import React from 'react';
 import { ArrowLeft, ShoppingCart } from 'lucide-react';
 import LocationMap from '../components/common/LocationMap';
 
@@ -30,7 +29,7 @@ const ProductDetails = () => {
             <p className="text-gray-600 mb-4">
               Fresh organic tomatoes grown with sustainable farming practices.
             </p>
-            
+
             <div className="space-y-4 mb-6">
               <div>
                 <span className="font-semibold text-gray-700">Price: </span>
@@ -60,7 +59,7 @@ const ProductDetails = () => {
             <p className="text-gray-600 mb-4">
               Location of {farmerName}
             </p>
-            
+
             {/* LocationMap Component Usage */}
             <LocationMap
               lat={farmerLat}
