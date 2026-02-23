@@ -88,3 +88,16 @@ export const deleteOrderItem = async (id: number): Promise<void> => {
   }
 };
 
+/**
+ * Create multiple order items at once
+ */
+export const createMultipleOrderItems = async (orderItems: OrderItemCreateDto[]): Promise<OrderItemResponse[]> => {
+  try {
+    const response = await axiosClient.post<OrderItemResponse[]>('/api/OrderItem/AddMultipleOrderItems', orderItems);
+    return response as OrderItemResponse[];
+  } catch (error: any) {
+    const errors = error.response?.data?.errors || [];
+    throw new Error(errors.length > 0 ? errors.join(', ') : 'Failed to create order items');
+  }
+};
+

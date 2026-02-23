@@ -1,326 +1,240 @@
-
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   Users,
-  ShieldCheck,
-  TrendingUp,
-  Search,
-  CheckCircle,
+  IndianRupee,
   Package,
-  LogOut,
+  Sprout,
   Loader2,
-  Menu,
-  X
+  Search,
+  TrendingUp,
+  ShoppingBag,
 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import { getAllUsers, getFarmers } from '../services/userService';
-import { getAllProducts } from '../services/productService';
+import { getAllUsers } from '../services/userService';
 import { getAllOrders } from '../services/orderService';
+import { getAllProducts } from '../services/productService';
 import { getFarmerStats } from '../services/adminService';
-import type { UserResponse, ProductResponse, OrderResponse, FarmerStatsResponse } from '../models/apiTypes';
+import type {
+  UserResponse,
+  OrderResponse,
+  ProductResponse,
+  FarmerStatsResponse,
+} from '../models/apiTypes';
 
-const AdminDashboard = () => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [farmers, setFarmers] = useState<UserResponse[]>([]);
-  const [allUsers, setAllUsers] = useState<UserResponse[]>([]);
-  const [products, setProducts] = useState<ProductResponse[]>([]);
+const AdminDashboard: React.FC = () => {
+  const [users, setUsers] = useState<UserResponse[]>([]);
   const [orders, setOrders] = useState<OrderResponse[]>([]);
+  const [products, setProducts] = useState<ProductResponse[]>([]);
   const [farmerStats, setFarmerStats] = useState<FarmerStatsResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    loadAdminData();
+    loadDashboardData();
   }, []);
 
-  const loadAdminData = async () => {
+  const loadDashboardData = async () => {
     try {
       setIsLoading(true);
-      setError(null);
-
-      // Load all data in parallel
-      const [usersData, farmersData, productsData, ordersData, statsData] = await Promise.all([
+      const [usersData, ordersData, productsData, statsData] = await Promise.all([
         getAllUsers(),
-        getFarmers(),
-        getAllProducts(),
         getAllOrders(),
-        getFarmerStats()
+        getAllProducts(),
+        getFarmerStats(),
       ]);
-
-      setAllUsers(usersData);
-      setFarmers(farmersData);
-      setProducts(productsData);
+      setUsers(usersData);
       setOrders(ordersData);
+      setProducts(productsData);
       setFarmerStats(statsData);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load admin data');
-      console.error('Error loading admin data:', err);
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+  const totalRevenue = orders.reduce((sum, o) => sum + o.totalAmount, 0);
+  const totalFarmers = users.filter((u) => u.role === 'Farmer').length;
+  const totalConsumers = users.filter((u) => u.role === 'Consumer').length;
+  const activeProducts = products.filter((p) => p.isActive !== false).length;
 
-  // Calculate stats
-  const totalUsers = allUsers.length;
-  const totalFarmers = farmers.length;
-  const totalConsumers = allUsers.filter(u => u.role === 'Consumer').length;
-  const activeProducts = products.filter(p => p.isActive !== false).length;
-  const totalRevenue = orders.reduce((sum, order) => sum + order.totalAmount, 0);
+  const filteredFarmerStats = farmerStats.filter((f) =>
+    f.farmerName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="text-center">
+          <Loader2 className="animate-spin text-green-600 mx-auto mb-4" size={48} />
+          <p className="text-gray-500">Loading dashboard data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex h-screen bg-gray-50 font-sans">
-      {/* Sidebar */}
-      <aside className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        md:relative md:translate-x-0
-      `}>
-        <div className="h-full flex flex-col">
-          {/* Logo Area */}
-          <div className="h-16 flex items-center justify-center border-b border-gray-100">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="text-primary" size={28} />
-              <h1 className="text-xl font-bold text-gray-800">Admin<span className="text-primary">Panel</span></h1>
+    <div>
+      {/* Page Header */}
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-800">Dashboard Overview</h1>
+        <p className="text-sm text-gray-500 mt-1">
+          System-wide statistics and farmer performance
+        </p>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+        <StatCard
+          title="Total Users"
+          value={users.length.toString()}
+          subtitle={`${totalFarmers} farmers · ${totalConsumers} consumers`}
+          icon={<Users className="text-white" size={22} />}
+          gradient="from-blue-500 to-indigo-600"
+        />
+        <StatCard
+          title="Total Revenue"
+          value={`₹${totalRevenue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          subtitle={`${orders.length} total orders`}
+          icon={<IndianRupee className="text-white" size={22} />}
+          gradient="from-green-500 to-emerald-600"
+        />
+        <StatCard
+          title="Active Products"
+          value={activeProducts.toString()}
+          subtitle={`${products.length} total products`}
+          icon={<Package className="text-white" size={22} />}
+          gradient="from-purple-500 to-violet-600"
+        />
+        <StatCard
+          title="Total Orders"
+          value={orders.length.toString()}
+          subtitle={`${orders.filter((o) => o.status === 'Pending').length} pending`}
+          icon={<ShoppingBag className="text-white" size={22} />}
+          gradient="from-amber-500 to-orange-600"
+        />
+      </div>
+
+      {/* Farmer Statistics Table */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="flex flex-col md:flex-row md:items-center justify-between p-6 border-b border-gray-100">
+          <div className="flex items-center gap-3 mb-3 md:mb-0">
+            <div className="p-2 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg shadow-sm">
+              <Sprout className="text-white" size={20} />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-gray-800">Farmer Statistics</h3>
+              <p className="text-sm text-gray-500">{farmerStats.length} registered farmers</p>
             </div>
           </div>
-
-          {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-2">
-            <NavItem icon={<ShieldCheck size={20} />} label="Dashboard" active />
-            <NavItem icon={<Users size={20} />} label="Users" />
-            <NavItem icon={<Package size={20} />} label="Products" />
-            <NavItem icon={<TrendingUp size={20} />} label="Analytics" />
-          </nav>
-
-          {/* User Profile (Bottom) */}
-          <div className="p-4 border-t border-gray-100">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-bold">
-                {user?.name?.charAt(0)?.toUpperCase() || 'A'}
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-gray-800">{user?.name || 'Admin'}</p>
-                <p className="text-xs text-gray-500">Administrator</p>
-              </div>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-            >
-              <LogOut size={18} />
-              <span className="text-sm font-medium">Logout</span>
-            </button>
+          <div className="relative w-full md:w-64">
+            <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search farmers..."
+              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500/20"
+            />
           </div>
         </div>
-      </aside>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Header */}
-        <header className="h-16 bg-white shadow-sm border-b border-gray-200 flex items-center justify-between px-6 sticky top-0 z-10">
-          <button onClick={toggleSidebar} className="md:hidden text-gray-500">
-            {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-          <h2 className="text-xl font-semibold text-gray-800">Admin Dashboard</h2>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-500 hidden md:block">Welcome, {user?.name || 'Admin'}</span>
-            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold md:hidden">
-              {user?.name?.charAt(0)?.toUpperCase() || 'A'}
-            </div>
+        {filteredFarmerStats.length === 0 ? (
+          <div className="text-center py-12 text-gray-500">
+            <Sprout className="mx-auto mb-3 text-gray-300" size={48} />
+            <p className="text-lg font-medium">No farmers found</p>
           </div>
-        </header>
-
-        {/* Scrollable Content Area */}
-        <main className="flex-1 overflow-y-auto p-6">
-          {/* Loading State */}
-          {isLoading && (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 className="animate-spin text-primary" size={48} />
-            </div>
-          )}
-
-          {/* Error State */}
-          {error && !isLoading && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-              <p className="text-red-600">{error}</p>
-            </div>
-          )}
-
-          {/* Stats Grid */}
-          {!isLoading && (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <StatCard
-                  title="Total Users"
-                  value={totalUsers.toString()}
-                  icon={<Users className="text-blue-500" />}
-                  change={`${totalConsumers} Consumers, ${totalFarmers} Farmers`}
-                  trend="up"
-                />
-                <StatCard
-                  title="Total Revenue"
-                  value={`₹${totalRevenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })} `}
-                  icon={<TrendingUp className="text-green-500" />}
-                  change={`${orders.length} Orders`}
-                  trend="up"
-                />
-                <StatCard
-                  title="Active Products"
-                  value={activeProducts.toString()}
-                  icon={<Package className="text-purple-500" />}
-                  change={`${products.length} Total Products`}
-                  trend="up"
-                />
-                <StatCard
-                  title="Farmers"
-                  value={totalFarmers.toString()}
-                  icon={<CheckCircle className="text-orange-500" />}
-                  change="Registered Farmers"
-                  trend="up"
-                />
-              </div>
-
-              {/* Farmer Statistics Section */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mt-8">
-                <div className="p-6 border-b border-gray-100">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                      <h2 className="text-lg font-bold text-gray-800">Farmer-wise Product Statistics</h2>
-                      <p className="text-sm text-gray-500">Overview of products and stock levels per farmer.</p>
-                    </div>
-
-                    <div className="relative">
-                      <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
-                      <input
-                        type="text"
-                        placeholder="Search farmers..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 w-64"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm">
-                    <thead className="bg-gray-50 text-gray-500 font-medium">
-                      <tr>
-                        <th className="px-6 py-4">Farmer Name</th>
-                        <th className="px-6 py-4">Product Count</th>
-                        <th className="px-6 py-4">Products & Stock</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                      {farmerStats
-                        .filter(stat => stat.farmerName.toLowerCase().includes(searchQuery.toLowerCase()))
-                        .map((stat) => (
-                          <tr key={stat.farmerId} className="hover:bg-gray-50 transition-colors">
-                            <td className="px-6 py-4 font-semibold text-gray-800">{stat.farmerName}</td>
-                            <td className="px-6 py-4">
-                              <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                {stat.productCount} Products
-                              </span>
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className="flex flex-wrap gap-2">
-                                {stat.products.map((p, idx) => (
-                                  <div key={idx} className="flex items-center gap-1.5 bg-gray-100 px-2 py-1 rounded-md text-xs text-gray-700">
-                                    <span className="font-medium">{p.productName}:</span>
-                                    <span className={p.stockQuantity < 10 ? 'text-red-600 font-bold' : 'text-green-600'}>
-                                      {p.stockQuantity}
-                                    </span>
-                                  </div>
-                                ))}
-                                {stat.products.length === 0 && <span className="text-gray-400 italic">No products</span>}
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      {farmerStats.length === 0 && (
-                        <tr>
-                          <td colSpan={3} className="px-6 py-10 text-center text-gray-500">
-                            No farmer statistics available
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </>
-          )}
-        </main>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gray-50 border-b border-gray-200">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Farmer
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Products
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Stock Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {filteredFarmerStats.map((farmer) => {
+                  const totalStock = farmer.products?.reduce(
+                    (sum, p) => sum + (p.stockQuantity || 0),
+                    0
+                  ) || 0;
+                  return (
+                    <tr key={farmer.farmerId} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white font-bold text-sm">
+                            {farmer.farmerName?.charAt(0)?.toUpperCase() || '?'}
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-800">{farmer.farmerName}</p>
+                            <p className="text-xs text-gray-400">ID: #{farmer.farmerId}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+                          <Package size={12} />
+                          {farmer.productCount} products
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${totalStock > 50
+                              ? 'bg-green-100 text-green-700'
+                              : totalStock > 10
+                                ? 'bg-amber-100 text-amber-700'
+                                : 'bg-red-100 text-red-700'
+                            }`}
+                        >
+                          {totalStock} units total
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-// --- Helper Components ---
-
-interface NavItemProps {
-  icon: React.ReactNode;
-  label: string;
-  active?: boolean;
-  to?: string;
-}
-
-const NavItem: React.FC<NavItemProps> = ({ icon, label, active = false, to }) => {
-  const content = (
-    <div className={`
-      flex items - center gap - 3 px - 4 py - 3 rounded - lg transition - colors
-      ${active
-        ? 'bg-primary/10 text-primary font-medium'
-        : 'text-gray-500 hover:bg-gray-50 hover:text-primary'
-      }
-`}>
-      {icon}
-      <span>{label}</span>
-    </div>
-  );
-
-  if (to) {
-    return <a href={to}>{content}</a>;
-  }
-
-  return content;
-};
+// --- Helper Component ---
 
 interface StatCardProps {
   title: string;
-  value: string | number;
+  value: string;
+  subtitle: string;
   icon: React.ReactNode;
-  change: string;
-  trend?: 'up' | 'down';
+  gradient: string;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ title, value, icon, change, trend = 'up' }) => (
-  <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-    <div className="flex justify-between items-start mb-4">
+const StatCard: React.FC<StatCardProps> = ({ title, value, subtitle, icon, gradient }) => (
+  <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 group">
+    <div className="flex items-start justify-between mb-3">
       <div className="flex-1">
-        <p className="text-sm font-medium text-gray-500">{title}</p>
-        <h3 className="text-2xl font-bold text-gray-900 mt-1">{value}</h3>
+        <p className="text-sm text-gray-500 mb-1">{title}</p>
+        <h3 className="text-2xl font-bold text-gray-800">{value}</h3>
       </div>
-      <div className="p-3 bg-gray-50 rounded-lg">{icon}</div>
+      <div
+        className={`p-3 rounded-xl bg-gradient-to-br ${gradient} shadow-lg group-hover:scale-110 transition-transform duration-200`}
+      >
+        {icon}
+      </div>
     </div>
-    <div className="flex items-center gap-1">
-      <span className={`text - xs font - medium ${trend === 'up' ? 'text-green-600' : 'text-red-600'
-        } `}>
-        {change}
-      </span>
-    </div>
+    <p className="text-xs text-gray-500 flex items-center gap-1">
+      <TrendingUp size={12} className="text-green-500" />
+      {subtitle}
+    </p>
   </div>
 );
 

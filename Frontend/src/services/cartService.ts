@@ -135,3 +135,16 @@ export const checkout = async (
   }
 };
 
+/**
+ * Add multiple items to cart at once
+ */
+export const addMultipleCarts = async (cartItems: CartCreateDto[]): Promise<CartResponse[]> => {
+  try {
+    const response = await axiosClient.post<CartResponse[]>('/api/Cart/AddMultipleCarts', cartItems);
+    return response as CartResponse[];
+  } catch (error: any) {
+    const errors = error.response?.data?.errors || [];
+    throw new Error(errors.length > 0 ? errors.join(', ') : 'Failed to add items to cart');
+  }
+};
+

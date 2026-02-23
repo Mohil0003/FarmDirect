@@ -3,7 +3,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import {
   ArrowLeft,
   Package,
-  DollarSign,
+  IndianRupee,
   Calendar,
   Image as ImageIcon,
   Loader2,
@@ -70,7 +70,7 @@ const ProductFormPage = () => {
     try {
       setIsLoading(true);
       const product = await getProductById(productId);
-      
+
       // Check if user owns this product (for farmers)
       if (user?.role === 'Farmer' && product.farmerId !== user.userId) {
         setError('You do not have permission to edit this product');
@@ -102,8 +102,8 @@ const ProductFormPage = () => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: name === 'categoryId' || name === 'farmerId' 
-        ? parseInt(value) 
+      [name]: name === 'categoryId' || name === 'farmerId'
+        ? parseInt(value)
         : (name === 'basePrice' || name === 'currentPrice' || name === 'stockQuantity'
           ? parseFloat(value) || 0
           : value),
@@ -294,7 +294,7 @@ const ProductFormPage = () => {
                   Base Price (₹) <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <DollarSign className="absolute left-3 top-3.5 text-gray-400" size={18} />
+                  <IndianRupee className="absolute left-3 top-3.5 text-gray-400" size={18} />
                   <input
                     type="number"
                     id="basePrice"
@@ -315,7 +315,7 @@ const ProductFormPage = () => {
                   Current Price (₹) <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <DollarSign className="absolute left-3 top-3.5 text-gray-400" size={18} />
+                  <IndianRupee className="absolute left-3 top-3.5 text-gray-400" size={18} />
                   <input
                     type="number"
                     id="currentPrice"

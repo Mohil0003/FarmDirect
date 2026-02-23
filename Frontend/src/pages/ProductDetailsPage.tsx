@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, ShoppingCart, Star, Loader2, MapPin, Tag } from 'lucide-react';
+import { useParams, Link } from 'react-router-dom';
+import { ShoppingCart, Star, Loader2, MapPin, Tag } from 'lucide-react';
 import LocationMap from '../components/common/LocationMap';
 import { getProductById } from '../services/productService';
 import { getProductReviews, addReview } from '../services/reviewService';
@@ -12,7 +12,6 @@ import type { ProductResponse, ReviewResponse, UserResponse } from '../models/ap
 
 const ProductDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const { user } = useAuth();
   const { addToCart: addToCartContext } = useCart();
 
@@ -125,14 +124,6 @@ const ProductDetailsPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-7xl mx-auto">
-        {/* Back Button */}
-        <button
-          onClick={() => navigate(-1)}
-          className="mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
-        >
-          <ArrowLeft size={20} />
-          <span>Back</span>
-        </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Left Column: Product Image */}

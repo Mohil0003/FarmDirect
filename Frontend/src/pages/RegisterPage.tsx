@@ -110,67 +110,67 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-bg to-white font-sans">
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-2xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <Link to="/" className="inline-flex items-center gap-2 mb-4">
-              <Sprout className="text-primary" size={32} />
-              <span className="text-2xl font-bold text-primary-dark">Farm<span className="text-secondary">Direct</span></span>
-            </Link>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Create Your Account</h1>
-            <p className="text-gray-600">Join our community of farmers and consumers</p>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-primary-bg to-white font-sans flex items-center justify-center">
+      <div className="w-full max-w-4xl mx-auto px-4 py-4">
+        {/* Header */}
+        <div className="text-center mb-4">
+          <Link to="/" className="inline-flex items-center gap-2 mb-2">
+            <Sprout className="text-primary" size={28} />
+            <span className="text-xl font-bold text-primary-dark">Farm<span className="text-secondary">Direct</span></span>
+          </Link>
+          <h1 className="text-2xl font-bold text-gray-800">Create Your Account</h1>
+        </div>
 
-          {/* Role Selection */}
-          <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              I want to register as:
-            </label>
-            <div className="grid grid-cols-2 gap-4">
-              <button
-                type="button"
-                onClick={() => setUserRole('Consumer')}
-                className={`p-4 rounded-lg border-2 transition-all ${userRole === 'Consumer'
-                  ? 'border-primary bg-primary/5 text-primary'
-                  : 'border-gray-200 hover:border-gray-300 text-gray-700'
-                  }`}
-              >
-                <div className="font-semibold mb-1">Consumer</div>
-                <div className="text-xs text-gray-500">Buy fresh produce</div>
-              </button>
-              <button
-                type="button"
-                onClick={() => setUserRole('Farmer')}
-                className={`p-4 rounded-lg border-2 transition-all ${userRole === 'Farmer'
-                  ? 'border-primary bg-primary/5 text-primary'
-                  : 'border-gray-200 hover:border-gray-300 text-gray-700'
-                  }`}
-              >
-                <div className="font-semibold mb-1">Farmer</div>
-                <div className="text-xs text-gray-500">Sell your products</div>
-              </button>
+        {/* Registration Card */}
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <form onSubmit={handleSubmit}>
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-2.5 rounded-lg text-sm mb-4">
+                {error}
+              </div>
+            )}
+
+            {/* Role Selection */}
+            <div className="mb-5">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                I want to register as:
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setUserRole('Consumer')}
+                  className={`p-3 rounded-lg border-2 transition-all text-sm ${userRole === 'Consumer'
+                    ? 'border-primary bg-primary/5 text-primary'
+                    : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                    }`}
+                >
+                  <div className="font-semibold">Consumer</div>
+                  <div className="text-xs text-gray-500">Buy fresh produce</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setUserRole('Farmer')}
+                  className={`p-3 rounded-lg border-2 transition-all text-sm ${userRole === 'Farmer'
+                    ? 'border-primary bg-primary/5 text-primary'
+                    : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                    }`}
+                >
+                  <div className="font-semibold">Farmer</div>
+                  <div className="text-xs text-gray-500">Sell your products</div>
+                </button>
+              </div>
             </div>
-          </div>
 
-          {/* Registration Form */}
-          <div className="bg-white rounded-xl shadow-lg p-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Error Message */}
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
-                  {error}
-                </div>
-              )}
-
+            {/* Form Fields - Two Column Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4">
               {/* Full Name */}
               <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
                   Full Name <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-3.5 text-gray-400" size={18} />
+                  <User className="absolute left-3 top-2.5 text-gray-400" size={16} />
                   <input
                     type="text"
                     id="fullName"
@@ -178,7 +178,7 @@ const RegisterPage = () => {
                     value={formData.fullName}
                     onChange={handleChange}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors"
+                    className="w-full pl-9 pr-3 py-2.5 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors text-sm"
                     placeholder="Enter your full name"
                   />
                 </div>
@@ -186,11 +186,11 @@ const RegisterPage = () => {
 
               {/* Email */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                   Email Address <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3.5 text-gray-400" size={18} />
+                  <Mail className="absolute left-3 top-2.5 text-gray-400" size={16} />
                   <input
                     type="email"
                     id="email"
@@ -198,7 +198,7 @@ const RegisterPage = () => {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors"
+                    className="w-full pl-9 pr-3 py-2.5 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors text-sm"
                     placeholder="your.email@example.com"
                   />
                 </div>
@@ -206,11 +206,11 @@ const RegisterPage = () => {
 
               {/* Phone Number */}
               <div>
-                <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">
                   Phone Number <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-3.5 text-gray-400" size={18} />
+                  <Phone className="absolute left-3 top-2.5 text-gray-400" size={16} />
                   <input
                     type="tel"
                     id="phoneNumber"
@@ -218,37 +218,39 @@ const RegisterPage = () => {
                     value={formData.phoneNumber}
                     onChange={handleChange}
                     required
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors"
+                    className="w-full pl-9 pr-3 py-2.5 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors text-sm"
                     placeholder="9876543210"
                   />
                 </div>
               </div>
 
-              {/* Address / Location - Different for Farmer vs Consumer */}
+              {/* Address / Location */}
               {userRole === 'Farmer' ? (
-                <LocationAutocomplete
-                  value={location.address}
-                  onChange={(locationData) => {
-                    setLocation(locationData);
-                    setError(null);
-                  }}
-                  placeholder="Search for your farm location..."
-                  required={true}
-                />
+                <div>
+                  <LocationAutocomplete
+                    value={location.address}
+                    onChange={(locationData) => {
+                      setLocation(locationData);
+                      setError(null);
+                    }}
+                    placeholder="Search for your farm location..."
+                    required={true}
+                  />
+                </div>
               ) : (
                 <div>
-                  <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                     Address (Optional)
                   </label>
                   <div className="relative">
-                    <MapPin className="absolute left-3 top-3.5 text-gray-400" size={18} />
-                    <textarea
+                    <MapPin className="absolute left-3 top-2.5 text-gray-400" size={16} />
+                    <input
+                      type="text"
                       id="address"
                       name="address"
                       value={formData.address}
                       onChange={handleChange}
-                      rows={3}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors resize-none"
+                      className="w-full pl-9 pr-3 py-2.5 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors text-sm"
                       placeholder="Enter your address"
                     />
                   </div>
@@ -257,11 +259,11 @@ const RegisterPage = () => {
 
               {/* Password */}
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                   Password <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3.5 text-gray-400" size={18} />
+                  <Lock className="absolute left-3 top-2.5 text-gray-400" size={16} />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     id="password"
@@ -270,26 +272,26 @@ const RegisterPage = () => {
                     onChange={handleChange}
                     required
                     minLength={6}
-                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors"
+                    className="w-full pl-9 pr-10 py-2.5 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors text-sm"
                     placeholder="At least 6 characters"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
                   >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
               </div>
 
               {/* Confirm Password */}
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
                   Confirm Password <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3.5 text-gray-400" size={18} />
+                  <Lock className="absolute left-3 top-2.5 text-gray-400" size={16} />
                   <input
                     type={showConfirmPassword ? 'text' : 'password'}
                     id="confirmPassword"
@@ -298,48 +300,48 @@ const RegisterPage = () => {
                     onChange={handleChange}
                     required
                     minLength={6}
-                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors"
+                    className="w-full pl-9 pr-10 py-2.5 border border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors text-sm"
                     placeholder="Confirm your password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
                   >
-                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
               </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3.5 rounded-lg transition-all shadow-lg shadow-primary/30 hover:shadow-primary/50 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="animate-spin" size={20} />
-                    <span>Creating Account...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Create Account</span>
-                    <ArrowRight size={20} />
-                  </>
-                )}
-              </button>
-            </form>
-
-            {/* Login Link */}
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
-                Already have an account?{' '}
-                <Link to="/login" className="font-semibold text-primary hover:text-primary-dark">
-                  Sign in
-                </Link>
-              </p>
             </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full mt-5 bg-primary hover:bg-primary-dark text-white font-bold py-3 rounded-lg transition-all shadow-lg shadow-primary/30 hover:shadow-primary/50 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="animate-spin" size={20} />
+                  <span>Creating Account...</span>
+                </>
+              ) : (
+                <>
+                  <span>Create Account</span>
+                  <ArrowRight size={20} />
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Login Link */}
+          <div className="mt-4 text-center">
+            <p className="text-sm text-gray-600">
+              Already have an account?{' '}
+              <Link to="/login" className="font-semibold text-primary hover:text-primary-dark">
+                Sign in
+              </Link>
+            </p>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, Search, Filter, Loader2, Tag } from 'lucide-react';
+import { Filter, Loader2, Tag, ShoppingCart } from 'lucide-react';
 import { getAllProducts } from '../services/productService';
 import { useCart } from '../context/CartContext';
 import { calculateDiscountedPrice, getUrgencyLevel, getUrgencyLabel, getUrgencyColorClasses } from '../utils/priceUtils';
@@ -11,7 +11,7 @@ const ShopPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const { cartCount, addToCart: addToCartContext } = useCart();
+  const { addToCart: addToCartContext } = useCart();
 
   useEffect(() => {
     loadProducts();
@@ -45,36 +45,7 @@ const ShopPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-text-main">
 
-      {/* 1. Navbar (Consumer Specific) */}
-      <nav className="bg-white shadow-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-primary-dark">Farm<span className="text-secondary">Direct</span></h1>
-
-          <div className="flex-1 max-w-md mx-8 hidden md:block">
-            <div className="relative">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search for fresh vegetables..."
-                className="w-full pl-10 pr-4 py-2 rounded-full border border-gray-200 focus:border-primary focus:outline-none bg-gray-50"
-              />
-              <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
-            </div>
-          </div>
-
-          <Link to="/cart" className="relative p-2 text-gray-600 hover:text-primary transition-colors">
-            <ShoppingCart size={24} />
-            {cartCount > 0 && (
-              <span className="absolute top-0 right-0 bg-secondary text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                {cartCount}
-              </span>
-            )}
-          </Link>
-        </div>
-      </nav>
-
-      {/* 2. Main Shop Area */}
+      {/* Main Shop Area */}
       <main className="container mx-auto px-4 py-8">
 
         {/* Filters Header */}

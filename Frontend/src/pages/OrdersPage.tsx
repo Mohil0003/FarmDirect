@@ -213,8 +213,8 @@ const OrdersPage = () => {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <Link
-                          to={`/orders/${order.orderId}`}
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-white text-sm font-medium rounded-lg transition-colors"
+                          to={`${user?.role === 'Admin' ? '/admin/orders' : user?.role === 'Consumer' ? '/consumer/orders' : '/orders'}/${order.orderId}`}
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors"
                         >
                           <Eye size={16} />
                           View Details

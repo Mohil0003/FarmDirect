@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ShoppingCart, Trash2, Plus, Minus, Loader2, ArrowRight } from 'lucide-react';
+import { ShoppingCart, Trash2, Plus, Minus, Loader2, ArrowRight, CreditCard, Smartphone, Building2, Truck } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { createOrder } from '../services/orderService';
+import { createMultipleOrderItems } from '../services/orderItemService';
+import { createPayment } from '../services/paymentService';
 import { useAuth } from '../context/AuthContext';
 import { calculateDiscountedPrice, getUrgencyLevel, getUrgencyColorClasses } from '../utils/priceUtils';
 import { orderToasts } from '../utils/toastUtils';
@@ -10,8 +12,9 @@ import { orderToasts } from '../utils/toastUtils';
 const CartPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { cartItems, isLoading, error, updateCart, removeFromCart, refreshCart } = useCart();
+  const { cartItems, isLoading, error, updateCart, removeFromCart, refreshCart, clearCart } = useCart();
   const [isCheckingOut, setIsCheckingOut] = React.useState(false);
+  const [paymentMethod, setPaymentMethod] = React.useState('UPI');
 
   useEffect(() => {
     if (user) {
@@ -43,19 +46,55 @@ const CartPage = () => {
         return sum + (pricing.currentPrice * item.quantity);
       }, 0);
 
+      const taxAmount = subtotal * 0.05;
+      const totalAmount = subtotal + taxAmount;
+
       // For now, we'll use the user's address as delivery address
       const deliveryAddress = user.email; // Placeholder
 
-      // Create order
+      // 1. Create order
       const order = await createOrder({
         consumerId: user.userId,
-        totalAmount: subtotal,
+        totalAmount,
         deliveryAddress,
         status: 'Pending',
       });
 
+      // 2. Create order items for each cart item
+      const orderItemsData = cartItems
+        .filter(item => item.product)
+        .map(item => ({
+          orderId: order.orderId,
+          productId: item.productId,
+          quantity: item.quantity,
+          unitPrice: calculateDiscountedPrice(item.product!.basePrice, item.product!.expiryDate).currentPrice,
+        }));
+
+      if (orderItemsData.length > 0) {
+        await createMultipleOrderItems(orderItemsData);
+      }
+
+      // 3. Create a pending payment record
+      await createPayment({
+        orderId: order.orderId,
+        amount: totalAmount,
+        paymentMethod: paymentMethod,
+        status: 'Pending',
+      });
+
+      // 4. Clear the cart
+      clearCart();
+      // Also remove cart items from the API
+      for (const item of cartItems) {
+        try {
+          await removeFromCart(item.cartId);
+        } catch {
+          // Ignore individual removal errors
+        }
+      }
+
       orderToasts.created(order.orderId);
-      navigate(`/orders/${order.orderId}`);
+      navigate(`/consumer/orders/${order.orderId}`);
     } catch (err: any) {
       orderToasts.failed(err.message || 'Unknown error');
     } finally {
@@ -269,6 +308,41 @@ const CartPage = () => {
                 </div>
               </div>
 
+              {/* Payment Method Selection */}
+              <div className="mb-6">
+                <h3 className="text-sm font-semibold text-gray-700 mb-3">Payment Method</h3>
+                <div className="space-y-2">
+                  {[
+                    { value: 'UPI', label: 'UPI (GPay / PhonePe)', icon: Smartphone, color: 'text-purple-600' },
+                    { value: 'Credit/Debit Card', label: 'Credit / Debit Card', icon: CreditCard, color: 'text-blue-600' },
+                    { value: 'Net Banking', label: 'Net Banking', icon: Building2, color: 'text-indigo-600' },
+                    { value: 'Cash on Delivery', label: 'Cash on Delivery', icon: Truck, color: 'text-green-600' },
+                  ].map((method) => {
+                    const Icon = method.icon;
+                    return (
+                      <label
+                        key={method.value}
+                        className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${paymentMethod === method.value
+                            ? 'border-green-500 bg-green-50'
+                            : 'border-gray-200 hover:border-gray-300 bg-white'
+                          }`}
+                      >
+                        <input
+                          type="radio"
+                          name="paymentMethod"
+                          value={method.value}
+                          checked={paymentMethod === method.value}
+                          onChange={(e) => setPaymentMethod(e.target.value)}
+                          className="accent-green-600"
+                        />
+                        <Icon size={18} className={method.color} />
+                        <span className="text-sm font-medium text-gray-700">{method.label}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
               <button
                 onClick={handleCheckout}
                 disabled={isCheckingOut || cartItems.length === 0}
@@ -281,7 +355,7 @@ const CartPage = () => {
                   </>
                 ) : (
                   <>
-                    Proceed to Checkout
+                    Place Order
                     <ArrowRight size={20} />
                   </>
                 )}
