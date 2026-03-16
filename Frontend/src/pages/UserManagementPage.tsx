@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Search, Loader2, Users, UserCheck, Sprout, ShieldCheck, Mail, Phone, Calendar } from 'lucide-react';
 import { getAllUsers } from '../services/userService';
 import type { UserResponse } from '../models/apiTypes';
+import Pagination from '../components/common/Pagination';
 
 type RoleFilter = 'All' | 'Farmer' | 'Consumer' | 'Admin';
 
@@ -18,6 +19,8 @@ const UserManagementPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<RoleFilter>('All');
     const [searchQuery, setSearchQuery] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
     useEffect(() => {
         loadUsers();
@@ -53,6 +56,17 @@ const UserManagementPage: React.FC = () => {
         }
         return result;
     }, [users, activeTab, searchQuery]);
+
+    // Reset to page 1 when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [activeTab, searchQuery]);
+
+    // Pagination logic
+    const totalItems = filteredUsers.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedUsers = filteredUsers.slice(startIndex, startIndex + itemsPerPage);
 
     const roleCounts = useMemo(() => {
         return {
@@ -167,7 +181,7 @@ const UserManagementPage: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
-                                {filteredUsers.map((u) => (
+                                {paginatedUsers.map((u) => (
                                     <tr key={u.userId} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
@@ -222,6 +236,14 @@ const UserManagementPage: React.FC = () => {
                                 ))}
                             </tbody>
                         </table>
+                        <Pagination 
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={setCurrentPage}
+                            itemsPerPage={itemsPerPage}
+                            onItemsPerPageChange={setItemsPerPage}
+                            totalItems={totalItems}
+                        />
                     </div>
                 )}
             </div>

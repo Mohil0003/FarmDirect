@@ -17,6 +17,7 @@ import {
   ChevronRight,
   ShoppingBag
 } from 'lucide-react';
+import Pagination from '../components/common/Pagination';
 import { useAuth } from '../context/AuthContext';
 import { getProductsByFarmerId, deleteProduct } from '../services/productService';
 import { getOrdersForFarmer } from '../services/orderService';
@@ -33,6 +34,11 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ userType }) => {
   const [farmerOrders, setFarmerOrders] = useState<FarmerOrderWithDetails[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [currentOrderPage, setCurrentOrderPage] = useState(1);
+  const [currentProductPage, setCurrentProductPage] = useState(1);
+  const [ordersPerPage, setOrdersPerPage] = useState(5);
+  const [productsPerPage, setProductsPerPage] = useState(5);
 
   useEffect(() => {
     if (user && userType === 'Farmer') {
@@ -86,8 +92,14 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ userType }) => {
   const totalOrders = farmerOrders.length;
   const pendingOrders = farmerOrders.filter(o => o.status === 'Pending' || !o.status).length;
   const completedOrders = farmerOrders.filter(o => o.status === 'Delivered' || o.status === 'Completed').length;
-  const recentOrders = farmerOrders.slice(0, 5);
-  const recentProducts = products.slice(0, 5);
+  
+  const totalOrderPages = Math.ceil(farmerOrders.length / ordersPerPage);
+  const orderStartIndex = (currentOrderPage - 1) * ordersPerPage;
+  const paginatedOrders = farmerOrders.slice(orderStartIndex, orderStartIndex + ordersPerPage);
+
+  const totalProductPages = Math.ceil(products.length / productsPerPage);
+  const productStartIndex = (currentProductPage - 1) * productsPerPage;
+  const paginatedProducts = products.slice(productStartIndex, productStartIndex + productsPerPage);
 
   const getStatusConfig = (status?: string) => {
     const statusLower = (status || 'Pending').toLowerCase();
@@ -210,7 +222,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ userType }) => {
           </div>
         ) : (
           <div className="divide-y divide-gray-100">
-            {recentOrders.map((order) => {
+            {paginatedOrders.map((order) => {
               const statusConfig = getStatusConfig(order.status);
               const StatusIcon = statusConfig.icon;
 
@@ -305,15 +317,16 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ userType }) => {
           </div>
         )}
 
-        {farmerOrders.length > 5 && (
-          <div className="p-4 bg-gray-50 border-t border-gray-100">
-            <Link
-              to="/orders"
-              className="flex items-center justify-center gap-2 text-primary hover:text-primary-dark font-medium transition-colors"
-            >
-              View all {farmerOrders.length} orders
-              <ChevronRight size={18} />
-            </Link>
+        {farmerOrders.length > 0 && (
+          <div className="p-4 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
+            <Pagination
+              currentPage={currentOrderPage}
+              totalPages={totalOrderPages}
+              onPageChange={setCurrentOrderPage}
+              itemsPerPage={ordersPerPage}
+              onItemsPerPageChange={setOrdersPerPage}
+              totalItems={farmerOrders.length}
+            />
           </div>
         )}
       </div>
@@ -335,7 +348,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ userType }) => {
             Add New
           </button>
         </div>
-        {recentProducts.length === 0 ? (
+        {products.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             <Package className="mx-auto mb-4 text-gray-300" size={48} />
             <p>No products yet</p>
@@ -359,7 +372,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ userType }) => {
                 </tr>
               </thead>
               <tbody className="text-sm">
-                {recentProducts.map((product) => (
+                {paginatedProducts.map((product) => (
                   <tr key={product.productId} className="border-b border-gray-50 hover:bg-gray-50">
                     <td className="py-4 font-medium text-gray-800">{product.name}</td>
                     <td className="py-4">₹{product.currentPrice.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} / {product.unit}</td>
@@ -394,6 +407,18 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ userType }) => {
                 ))}
               </tbody>
             </table>
+            {products.length > 0 && (
+              <div className="mt-4">
+                <Pagination
+                  currentPage={currentProductPage}
+                  totalPages={totalProductPages}
+                  onPageChange={setCurrentProductPage}
+                  itemsPerPage={productsPerPage}
+                  onItemsPerPageChange={setProductsPerPage}
+                  totalItems={products.length}
+                />
+              </div>
+            )}
           </div>
         )}
       </div>

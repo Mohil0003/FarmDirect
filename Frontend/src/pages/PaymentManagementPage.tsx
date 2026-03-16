@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Loader2, CreditCard, CheckCircle, XCircle, Clock, RefreshCw, Trash2 } from 'lucide-react';
 import { getAllPayments, updatePayment, deletePayment } from '../services/paymentService';
 import { showSuccessToast, showErrorToast } from '../utils/toastUtils';
+import Pagination from '../components/common/Pagination';
 import type { PaymentResponse } from '../models/apiTypes';
 
 const PaymentManagementPage = () => {
@@ -11,6 +12,8 @@ const PaymentManagementPage = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [updatingId, setUpdatingId] = useState<number | null>(null);
     const [filterStatus, setFilterStatus] = useState<string>('all');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
     useEffect(() => {
         loadPayments();
@@ -76,6 +79,17 @@ const PaymentManagementPage = () => {
     const filteredPayments = filterStatus === 'all'
         ? payments
         : payments.filter(p => (p.status || 'Pending').toLowerCase() === filterStatus.toLowerCase());
+
+    // Reset to page 1 when filter changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filterStatus]);
+
+    // Pagination logic
+    const totalItems = filteredPayments.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedPayments = filteredPayments.slice(startIndex, startIndex + itemsPerPage);
 
     const totalAmount = payments.reduce((sum, p) => sum + p.amount, 0);
     const completedAmount = payments.filter(p => p.status?.toLowerCase() === 'completed').reduce((sum, p) => sum + p.amount, 0);
@@ -147,7 +161,8 @@ const PaymentManagementPage = () => {
                             </p>
                         </div>
                     ) : (
-                        <table className="w-full">
+                        <>
+                            <table className="w-full">
                             <thead className="bg-gray-50 border-b border-gray-200">
                                 <tr>
                                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Payment ID</th>
@@ -160,7 +175,7 @@ const PaymentManagementPage = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
-                                {filteredPayments.map((payment) => {
+                                {paginatedPayments.map((payment) => {
                                     const statusConfig = getStatusConfig(payment.status);
                                     return (
                                         <tr key={payment.paymentId} className="hover:bg-gray-50 transition-colors">
@@ -230,6 +245,15 @@ const PaymentManagementPage = () => {
                                 })}
                             </tbody>
                         </table>
+                        <Pagination 
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={setCurrentPage}
+                            itemsPerPage={itemsPerPage}
+                            onItemsPerPageChange={setItemsPerPage}
+                            totalItems={totalItems}
+                        />
+                        </>
                     )}
                 </div>
             </div>

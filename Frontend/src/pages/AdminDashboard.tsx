@@ -19,6 +19,7 @@ import type {
   ProductResponse,
   FarmerStatsResponse,
 } from '../models/apiTypes';
+import Pagination from '../components/common/Pagination';
 
 const AdminDashboard: React.FC = () => {
   const [users, setUsers] = useState<UserResponse[]>([]);
@@ -27,6 +28,8 @@ const AdminDashboard: React.FC = () => {
   const [farmerStats, setFarmerStats] = useState<FarmerStatsResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
     loadDashboardData();
@@ -60,6 +63,15 @@ const AdminDashboard: React.FC = () => {
   const filteredFarmerStats = farmerStats.filter((f) =>
     f.farmerName.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
+  const totalItems = filteredFarmerStats.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedFarmerStats = filteredFarmerStats.slice(startIndex, startIndex + itemsPerPage);
 
   if (isLoading) {
     return (
@@ -160,7 +172,7 @@ const AdminDashboard: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {filteredFarmerStats.map((farmer) => {
+                {paginatedFarmerStats.map((farmer) => {
                   const totalStock = farmer.products?.reduce(
                     (sum, p) => sum + (p.stockQuantity || 0),
                     0
@@ -201,6 +213,14 @@ const AdminDashboard: React.FC = () => {
                 })}
               </tbody>
             </table>
+            <Pagination 
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              itemsPerPage={itemsPerPage}
+              onItemsPerPageChange={setItemsPerPage}
+              totalItems={totalItems}
+            />
           </div>
         )}
       </div>

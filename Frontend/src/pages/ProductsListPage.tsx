@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Package, Plus, Edit, Trash2, Search, Loader2, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { getProductsByFarmerId, deleteProduct } from '../services/productService';
+import Pagination from '../components/common/Pagination';
 import type { ProductResponse } from '../models/apiTypes';
 
 const ProductsListPage: React.FC = () => {
@@ -12,6 +13,10 @@ const ProductsListPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
+    
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(6); // 6 products per page (2 rows of 3)
 
     useEffect(() => {
         loadProducts();
@@ -28,6 +33,7 @@ const ProductsListPage: React.FC = () => {
             );
             setFilteredProducts(filtered);
         }
+        setCurrentPage(1); // Reset to first page on search
     }, [searchQuery, products]);
 
     const loadProducts = async () => {
@@ -69,6 +75,12 @@ const ProductsListPage: React.FC = () => {
             percentage: discount
         };
     };
+
+    // Pagination logic
+    const totalItems = filteredProducts.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedProducts = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -124,9 +136,9 @@ const ProductsListPage: React.FC = () => {
                             </div>
                         ) : (
                             <>
-                                <div className="mb-4 text-sm text-gray-600">Showing {filteredProducts.length} of {products.length} product{products.length !== 1 ? 's' : ''}</div>
+                                <div className="mb-4 text-sm text-gray-600">Showing {startIndex + 1}-{Math.min(startIndex + itemsPerPage, totalItems)} of {totalItems} product{totalItems !== 1 ? 's' : ''}</div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {filteredProducts.map((product) => {
+                                    {paginatedProducts.map((product) => {
                                         const discount = calculateDiscount(product.basePrice, product.currentPrice);
 
                                         return (
@@ -185,6 +197,19 @@ const ProductsListPage: React.FC = () => {
                                         );
                                     })}
                                 </div>
+                                
+                                {totalItems > 0 && (
+                                    <div className="mt-8">
+                                        <Pagination
+                                            currentPage={currentPage}
+                                            totalPages={totalPages}
+                                            onPageChange={setCurrentPage}
+                                            itemsPerPage={itemsPerPage}
+                                            onItemsPerPageChange={setItemsPerPage}
+                                            totalItems={totalItems}
+                                        />
+                                    </div>
+                                )}
                             </>
                         )}
                     </>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Loader2, FolderTree, X, Save } from 'lucide-react';
 import { getAllCategories, createCategory, updateCategory, deleteCategory } from '../services/categoryService';
 import { showSuccessToast, showErrorToast } from '../utils/toastUtils';
+import Pagination from '../components/common/Pagination';
 import type { CategoryResponse, CategoryCreateDto } from '../models/apiTypes';
 
 const CategoryManagementPage = () => {
@@ -13,6 +14,8 @@ const CategoryManagementPage = () => {
     const [editingCategory, setEditingCategory] = useState<CategoryResponse | null>(null);
     const [formData, setFormData] = useState<CategoryCreateDto>({ categoryName: '', description: '' });
     const [isSaving, setIsSaving] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
     useEffect(() => {
         loadCategories();
@@ -75,6 +78,12 @@ const CategoryManagementPage = () => {
         }
     };
 
+    // Pagination logic
+    const totalItems = categories.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedCategories = categories.slice(startIndex, startIndex + itemsPerPage);
+
     if (isLoading) {
         return (
             <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -118,6 +127,7 @@ const CategoryManagementPage = () => {
                             </button>
                         </div>
                     ) : (
+                        <>
                         <table className="w-full">
                             <thead className="bg-gray-50 border-b border-gray-200">
                                 <tr>
@@ -128,7 +138,7 @@ const CategoryManagementPage = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
-                                {categories.map((cat) => (
+                                {paginatedCategories.map((cat) => (
                                     <tr key={cat.categoryId} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-6 py-4 text-sm text-gray-500 font-mono">#{cat.categoryId}</td>
                                         <td className="px-6 py-4">
@@ -159,6 +169,15 @@ const CategoryManagementPage = () => {
                                 ))}
                             </tbody>
                         </table>
+                        <Pagination 
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={setCurrentPage}
+                            itemsPerPage={itemsPerPage}
+                            onItemsPerPageChange={setItemsPerPage}
+                            totalItems={totalItems}
+                        />
+                        </>
                     )}
                 </div>
 
